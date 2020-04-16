@@ -1,7 +1,7 @@
 
 function gGlobalVars()
 {
-    let variables = 
+    const variables = 
     {
         DB_Base: "MYSQL",  
         //DB_Address: "quiteoften-nodejs-api:us-central1:quiteoften-mysql-57-db",    
@@ -34,12 +34,12 @@ function DB_OpenConnection()
     gDB_objConn = Jdbc.getConnection(dbUrl, gGlobalVars().DB_User, gGlobalVars().DB_Password);
 
     
-    //let instanceUrl = 'jdbc:google:mysql://' + gGlobalVars().DB_Address;
-    //let dbUrl = instanceUrl + '/' + gGlobalVars().DB_Name;
+    //let instanceUrl = 'jdbc:google:mysql://' + gGlobalVars()().DB_Address;
+    //let dbUrl = instanceUrl + '/' + gGlobalVars()().DB_Name;
   
-    //gDB_objConn = Jdbc.getCloudSqlConnection(dbUrl, gGlobalVars().DB_User, gGlobalVars().DB_Password);
+    //gDB_objConn = Jdbc.getCloudSqlConnection(dbUrl, gGlobalVars()().DB_User, gGlobalVars()().DB_Password);
   
-    //Log(dbUrl + " --- " + gGlobalVars().DB_User + " --- " + gGlobalVars().DB_Password);
+    //Log(dbUrl + " --- " + gGlobalVars()().DB_User + " --- " + gGlobalVars()().DB_Password);
                    
 }
 

@@ -195,8 +195,9 @@ function onClick_btnDoSearch(event)
     //let retFunc = getPeople("marcelo", "ALL", "ALL");
     //let retFunc = getPeople("marcelo", "", "", "", false);
 
-    let retFunc = getPeople(txtToSearch, "ALL", "CONTACTS", "NAME", true);
+    return getPeople(txtToSearch, "ALL", "CONTACTS", "NAME", true);
 
+    
     if (left(retFunc, 2) == "-1")
     {
         return showPopMsg("AppCalendario: An error has occurred: " + retFunc.split("|")[1]);

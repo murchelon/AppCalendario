@@ -5,11 +5,11 @@ function TestBIB()
 
     //getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
 
-    // var retFunc = getPeople("marcelo", "ALL", "ALL", "EMAIL", true);
-    // //var retFunc = getPeople(" oliveira ", "ALL", "ALL");
-    // console.log("retFunc: " + retFunc);
+    let retFunc = getPeople("", "ALL", "CONTACTS", "NAME", true);
+    console.log("retFunc: " + retFunc);
 
 }
+
 
 
 //Get the current message opened
@@ -17,12 +17,12 @@ function TEST_GetProfilePhotosFromPeople()
 { 
     logStack("TEST_GetProfilePhotosFromPeople");
 
-    var people = People.People.Connections.list('people/me', {
+    let people = People.People.Connections.list('people/me', {
         personFields: 'names,photos'
     });
 
     
-    var json1 = JSON.parse(people);
+    let json1 = JSON.parse(people);
 
     //Logger.log(JSON.stringify(json1));
     
@@ -30,63 +30,63 @@ function TEST_GetProfilePhotosFromPeople()
     Logger.log("============================");
 
 
-    for (var item in json1)
+    for (let item in json1)
     {
         if (item == "totalItems")
         {
-            var totalItensFound = json1[item]
+            let totalItensFound = json1[item]
         }
         
         if (item == "connections")
         {        
             //Logger.log("ITEM: " + item + " = " + json1[item]);
             
-            for (var connection in json1[item])
+            for (let connection in json1[item])
             {
                 //Logger.log("== CONNECTION: " + connection + " = " + json1[item][connection]);
                 
-                for (var attributes in json1[item][connection])
+                for (let attributes in json1[item][connection])
                 {
                     //Logger.log("== ATTR: " + attributes + " = " + json1[item][connection][attributes]);
 
                     if (attributes == "resourceName")
                     {
-                        var contact_resourceName = json1[item][connection][attributes];
+                        let contact_resourceName = json1[item][connection][attributes];
                     }
                     
                     if (attributes == "etag")
                     {
-                        var contact_etag = json1[item][connection][attributes];
+                        let contact_etag = json1[item][connection][attributes];
                     }
                         
                     if (attributes == "names")
                     {
-                        for (var names in json1[item][connection][attributes])
+                        for (let names in json1[item][connection][attributes])
                         {
-                            for (var name_detail in json1[item][connection][attributes][names])
+                            for (let name_detail in json1[item][connection][attributes][names])
                             {
                                 //Logger.log("== NAME_DETAIL: " + name_detail + " = " + json1[item][connection][attributes][names][name_detail]);
                                 
                                 if (name_detail == "displayName")
                                 {
-                                    var contact_name = json1[item][connection][attributes][names][name_detail];
+                                    let contact_name = json1[item][connection][attributes][names][name_detail];
                                 }
                                 
                                 if (name_detail == "metadata")
                                 {
-                                    for (var metadata in json1[item][connection][attributes][names][name_detail])
+                                    for (let metadata in json1[item][connection][attributes][names][name_detail])
                                     {                                    
                                         //Logger.log("== NAME_DETAIL_METADATA: " + metadata + " = " + json1[item][connection][attributes][names][name_detail][metadata]);
                                         
                                         if (metadata == "source")
                                         {
-                                            for (var source in json1[item][connection][attributes][names][name_detail][metadata])
+                                            for (let source in json1[item][connection][attributes][names][name_detail][metadata])
                                             {                                            
                                                 //Logger.log("== NAME_DETAIL_METADATA_SOURCE: " + source + " = " + json1[item][connection][attributes][names][name_detail][metadata][source]);
                                                 
                                                 if (source == "id")
                                                 {                                                
-                                                    var contact_id = json1[item][connection][attributes][names][name_detail][metadata][source]
+                                                    let contact_id = json1[item][connection][attributes][names][name_detail][metadata][source]
                                                 }
                                                 
                                             }
@@ -106,11 +106,11 @@ function TEST_GetProfilePhotosFromPeople()
                     
                     if (attributes == "photos")
                     {
-                        for (var photos in json1[item][connection][attributes])
+                        for (let photos in json1[item][connection][attributes])
                         {
                             //Logger.log("== PHOTOS: " + photos + " = " + json1[item][connection][attributes][photos]);
                             
-                            for (var photo_detail in json1[item][connection][attributes][photos])
+                            for (let photo_detail in json1[item][connection][attributes][photos])
                             {
                                 //Logger.log("== PHO_DETAIL: " + photo_detail + " = " + json1[item][connection][attributes][photos][photo_detail]);
                                 
@@ -120,7 +120,7 @@ function TEST_GetProfilePhotosFromPeople()
                                     
                                     if (photo_detail == "url")
                                     {
-                                        var contact_photo = json1[item][connection][attributes][photos][photo_detail];
+                                        let contact_photo = json1[item][connection][attributes][photos][photo_detail];
                                     }
                                 
                                 }
@@ -148,7 +148,7 @@ function TEST_GetProfilePhotosFromPeople()
     
     // accountId = "a6d2e8a8e8166ab";
 
-    // var people = People.People.get('people/' + accountId, {
+    // let people = People.People.get('people/' + accountId, {
     //     personFields: 'names,emailAddresses,coverPhotos,photos'
     // });
 
@@ -164,8 +164,8 @@ function TEST_GetProfilePhotosFromPeople()
 function getCurrentMessage(event)
 {
     logStack("getCurrentMessage");
-    var accessToken = event.messageMetadata.accessToken;
-    var messageId = event.messageMetadata.messageId;
+    let accessToken = event.messageMetadata.accessToken;
+    let messageId = event.messageMetadata.messageId;
 
     GmailApp.setCurrentMessageAccessToken(accessToken);
 
@@ -176,11 +176,11 @@ function getCurrentMessage(event)
 //Get a string in ISO date format, from a given date. returns string: YYYY-MM-DD HH:MM:SS
 function isoDate(theDate)
 {
-    var ret = "";
+    let ret = "";
 
     if (theDate != "" && theDate != null)
     {
-        var ret = theDate.toISOString();
+        let ret = theDate.toISOString();
 
         ret = trim(ret);
         ret = ret.replace("T", " ");
@@ -194,7 +194,7 @@ function isoDate(theDate)
 //Get the left-most N caracters from a string
 function left(theString, Size)
 {
-    var ret = "";
+    let ret = "";
 
     if (theString != "" && theString != null)
     {
@@ -208,7 +208,7 @@ function left(theString, Size)
 //Get the right-most N caracters from a string
 function right(theString, Size)
 {
-    var ret = "";
+    let ret = "";
 
     if (theString != "" && theString != null)
     {
@@ -222,7 +222,7 @@ function right(theString, Size)
 // trim the string
 function trim(theString)
 {  
-    var ret = "";
+    let ret = "";
 
     if (theString != "" && theString != null)
     {
@@ -236,7 +236,7 @@ function trim(theString)
 // clean the string removing non printable chars and others that might be handfull. Also trims the string
 function clean(theString)
 {  
-    var ret = "";
+    let ret = "";
 
     if (typeof(theString) === "undefined")
     {
@@ -293,24 +293,23 @@ function addBtnToBtnSet(id, Text, onClickFunction, isFilled)
 {
     logStack("addBtnToBtnSet");
 
-    var local_function = onClickFunction.toString();
+    let local_function = onClickFunction.toString();
+
+    let TypeButton = CardService.TextButtonStyle.TEXT;
 
     // Button
-    var action = CardService.newAction()
+    let action = CardService.newAction()
         .setFunctionName(local_function)
         .setLoadIndicator(CardService.LoadIndicator.SPINNER)
         .setParameters({'id': id.toString()});
     
     if (isFilled == true)
     {
-        var TypeButton = CardService.TextButtonStyle.FILLED
+        TypeButton = CardService.TextButtonStyle.FILLED
     }   
-    else
-    {
-        var TypeButton = CardService.TextButtonStyle.TEXT
-    } 
+     
     
-    var button = CardService.newTextButton()
+    let button = CardService.newTextButton()
         .setText(Text)
         .setTextButtonStyle(TypeButton)
         .setBackgroundColor("#315c7a")
@@ -325,11 +324,11 @@ function render_Alert(Message, funcToReturn)
     logStack("render_Alert");
 
     
-    var buttonSet_Back = CardService.newButtonSet();
+    let buttonSet_Back = CardService.newButtonSet();
     buttonSet_Back.addButton(addBtnToBtnSet(1, "Back", funcToReturn.toString(), true));    
 
     // Render the page, adding all widgets
-    var card = CardService.newCardBuilder()
+    let card = CardService.newCardBuilder()
         //.setHeader(cardHeader)
         .addSection(CardService.newCardSection()
             .addWidget(CardService.newTextParagraph().setText(Message))
@@ -338,7 +337,7 @@ function render_Alert(Message, funcToReturn)
 
         .build();
 
-    var nav = CardService.newNavigation().pushCard(card);
+    let nav = CardService.newNavigation().pushCard(card);
         return CardService.newActionResponseBuilder()
             .setNavigation(nav)
             .build();
@@ -356,10 +355,10 @@ function writeDebugTxtInScreen(theText)
 {
     logStack("writeDebugTxtInScreen");
 
-    var card_section1 = CardService.newCardSection()
+    let card_section1 = CardService.newCardSection()
         .addWidget(CardService.newTextParagraph().setText(theText));
  
-    var card = CardService.newCardBuilder()
+    let card = CardService.newCardBuilder()
         .addSection(card_section1)
         .build();
 
@@ -399,16 +398,16 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
     //
     // Calling examples: ("" can default to "ALL" or "NAME" or true, depending on witch parameter we are looking)
     //
-    // var retFunc = getPeople("Marcelo", "NAME", "ALL", "NAME", true);
+    // let retFunc = getPeople("Marcelo", "NAME", "ALL", "NAME", true);
     // console.log(JSON.stringfy(retFunc));
     //
-    // var retFunc = getPeople("Joao");
+    // let retFunc = getPeople("Joao");
     // console.log(JSON.stringfy(retFunc));
     //
-    // var retFunc = getPeople("", "", "CONTACTS", "NAME"); // get all contacts 
+    // let retFunc = getPeople("", "", "CONTACTS", "NAME"); // get all contacts 
     // console.log(JSON.stringfy(retFunc));
     //
-    // var retFunc = getPeople("Andre", "ALL", "ALL", "NAME", false);
+    // let retFunc = getPeople("Andre", "ALL", "ALL", "NAME", false);
     // console.log(JSON.stringfy(retFunc));
     //
     //
@@ -466,22 +465,22 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
     logStack("getPeople");
 
-    var retFunc = "";
+    let retFunc = "";
     
-    var lookInContacts = false;
-    var lookInDirectory = false;
+    let lookInContacts = false;
+    let lookInDirectory = false;
 
-    var lookInEmail = false;
-    var lookInName = false;
+    let lookInEmail = false;
+    let lookInName = false;
 
-    var aRetResults_temp = [];
-    var aRetResults_NoDuplicated = [];
-    var aRetResults_final = [];
-    var countResult = 0;    
+    let aRetResults_temp = [];
+    let aRetResults_NoDuplicated = [];
+    let aRetResults_final = [];
+    let countResult = 0;    
     
-    var aTemp_Name = [];
+    let aTemp_Name = [];
 
-    var param_SearchProfilePhotoInPeopleAPI = true;     // param that can be set to true or false, to look for the profile picture for contacts
+    let param_SearchProfilePhotoInPeopleAPI = true;     // param that can be set to true or false, to look for the profile picture for contacts
 
 
 
@@ -553,85 +552,85 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
                 // code just to get the contacts profile photos, witch reside in the People API:
                 var aPeopleContactPhotos = [];
-                var contaPeople = 0;
+                let contaPeople = 0;
 
                 // create the array with all personal contacts profile photos
-                var people = People.People.Connections.list('people/me', {
+                let people = People.People.Connections.list('people/me', {
                     personFields: 'names,photos'
                 });
                             
-                var json1 = JSON.parse(people);
+                let json1 = JSON.parse(people);
                     
                 //Logger.log("============================");
             
                 
-                for (var item in json1)
+                for (let item in json1)
                 {
                     if (item == "totalItems")
                     {
-                        var totalItensFound = json1[item]
+                        let totalItensFound = json1[item]
                     }
                     
                     if (item == "connections")
                     {        
                         //Logger.log("ITEM: " + item + " = " + json1[item]);
                         
-                        for (var connection in json1[item])
+                        for (let connection in json1[item])
                         {
                             //Logger.log("== CONNECTION: " + connection + " = " + json1[item][connection]);
                             
-                            var contact_id = "";
-                            var contact_name = "";
-                            var contact_photo = "";
-                            var contact_resourceName = "";
-                            var contact_etag = "";
+                            let contact_id = "";
+                            let contact_name = "";
+                            let contact_photo = "";
+                            let contact_resourceName = "";
+                            let contact_etag = "";
                         
                             
-                            for (var attributes in json1[item][connection])
+                            for (let attributes in json1[item][connection])
                             {
                                 //Logger.log("== ATTR: " + attributes + " = " + json1[item][connection][attributes]);
             
                                 // get resourceName
                                 if (attributes == "resourceName")
                                 {
-                                    var contact_resourceName = json1[item][connection][attributes];
+                                    let contact_resourceName = json1[item][connection][attributes];
                                 }
                                 
                                 // get etag
                                 if (attributes == "etag")
                                 {
-                                    var contact_etag = json1[item][connection][attributes];
+                                    let contact_etag = json1[item][connection][attributes];
                                 }
                                     
                                 // get the contact ID
                                 if (attributes == "names")
                                 {
-                                    for (var names in json1[item][connection][attributes])
+                                    for (let names in json1[item][connection][attributes])
                                     {
-                                        for (var name_detail in json1[item][connection][attributes][names])
+                                        for (let name_detail in json1[item][connection][attributes][names])
                                         {
                                             //Logger.log("== NAME_DETAIL: " + name_detail + " = " + json1[item][connection][attributes][names][name_detail]);
                                             
                                             if (name_detail == "displayName")
                                             {
-                                                var contact_name = json1[item][connection][attributes][names][name_detail];
+                                                let contact_name = json1[item][connection][attributes][names][name_detail];
                                             }
                                             
                                             if (name_detail == "metadata")
                                             {
-                                                for (var metadata in json1[item][connection][attributes][names][name_detail])
+                                                for (let metadata in json1[item][connection][attributes][names][name_detail])
                                                 {                                    
                                                     //Logger.log("== NAME_DETAIL_METADATA: " + metadata + " = " + json1[item][connection][attributes][names][name_detail][metadata]);
                                                     
                                                     if (metadata == "source")
                                                     {
-                                                        for (var source in json1[item][connection][attributes][names][name_detail][metadata])
+                                                        for (let source in json1[item][connection][attributes][names][name_detail][metadata])
                                                         {                                            
                                                             //Logger.log("== NAME_DETAIL_METADATA_SOURCE: " + source + " = " + json1[item][connection][attributes][names][name_detail][metadata][source]);
                                                             
                                                             if (source == "id")
                                                             {                                                
-                                                                var contact_id = json1[item][connection][attributes][names][name_detail][metadata][source]
+                                                                let contact_id = json1[item][connection][attributes][names][name_detail][metadata][source]
                                                             }
                                                             
                                                         }
@@ -651,11 +650,11 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                                 // get the photos
                                 if (attributes == "photos")
                                 {
-                                    for (var photos in json1[item][connection][attributes])
+                                    for (let photos in json1[item][connection][attributes])
                                     {
                                         //Logger.log("== PHOTOS: " + photos + " = " + json1[item][connection][attributes][photos]);
                                         
-                                        for (var photo_detail in json1[item][connection][attributes][photos])
+                                        for (let photo_detail in json1[item][connection][attributes][photos])
                                         {
                                             //Logger.log("== PHO_DETAIL: " + photo_detail + " = " + json1[item][connection][attributes][photos][photo_detail]);
                                             
@@ -665,7 +664,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                                                 
                                                 if (photo_detail == "url")
                                                 {
-                                                    var contact_photo = json1[item][connection][attributes][photos][photo_detail];
+                                                    let contact_photo = json1[item][connection][attributes][photos][photo_detail];
                                                 }
                                             
                                             }
@@ -686,7 +685,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                             // Logger.log("============================");   
                             
 
-                            var retJSON = "";
+                            let retJSON = "";
                             retJSON += "{";
                             retJSON += "    'index': " + contaPeople.toString() + ",";
                             retJSON += "    'source': 'PEOPLE_API',";
@@ -717,7 +716,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                     
                 // console.log("-- aPeopleContactPhotos - PHOTOS FROM CONTACTS --");
                 // console.log("aPeopleContactPhotos.length: " + aPeopleContactPhotos.length.toString()); 
-                // for (var countContact = 0 ; countContact < aPeopleContactPhotos.length ; countContact++)
+                // for (let countContact = 0 ; countContact < aPeopleContactPhotos.length ; countContact++)
                 // {
                 //     console.log("aPeopleContactPhotos[" + countContact.toString() + "] = " + aPeopleContactPhotos[countContact]);    
                 // }
@@ -742,7 +741,9 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         try
         {
             // if searching for name and email, it takes 2 rounds of search. DEfault is 1 round only
-            var rounds = 1;
+            let rounds = 1;
+
+            let contacts;
 
             // if search string is empty, then, we need only 1 round becase we will get all contacts using the method .getContacts()
             if (searchText != "")
@@ -756,13 +757,13 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
 
 
-            for (var countRound = 1 ; countRound <= rounds ; countRound++)
+            for (let countRound = 1 ; countRound <= rounds ; countRound++)
             {
 
                 // if search string is empty, so bring ALL contacts
                 if (searchText == "")
                 {
-                    var contacts = ContactsApp.getContacts();
+                    contacts = ContactsApp.getContacts();
                 }
                 else
                 {
@@ -771,21 +772,21 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                     {
                         if (countRound == 1)
                         {
-                            var contacts = ContactsApp.getContactsByEmailAddress(searchText);
+                            contacts = ContactsApp.getContactsByEmailAddress(searchText);
                         }
                         else if (countRound == 2)
                         {
-                            var contacts = ContactsApp.getContactsByName(searchText);
+                            contacts = ContactsApp.getContactsByName(searchText);
                         }
                         
                     }
                     else if ((lookInEmail == false) && (lookInName == true))
                     {
-                        var contacts = ContactsApp.getContactsByName(searchText);
+                        contacts = ContactsApp.getContactsByName(searchText);
                     }
                     else if ((lookInEmail == true) && (lookInName == false))
                     {
-                        var contacts = ContactsApp.getContactsByEmailAddress(searchText);
+                        contacts = ContactsApp.getContactsByEmailAddress(searchText);
                     }
 
                 }
@@ -794,15 +795,20 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                 
 
 
-                for (var c in contacts)
+                for (let c in contacts)
                 {
-                    var isNewResult = true;
+   
+                    //let _temp = contacts[c].getId().split("/");
 
-                    var outThumbnailPhotoUrl = "https://ssl.gstatic.com/s2/profiles/images/silhouette200.png";
+                    //return writeDebugTxtInScreen("gGlobalVars.Session_UserEmail = " + gGlobalVars.Session_UserEmail);
+
+                    let _email = replaceALL(Session.getEffectiveUser().getEmail(), "@", "%40");
+                                      
+                    let outThumbnailPhotoUrl = "https://ssl.gstatic.com/s2/profiles/images/silhouette200.png";
                     
-                    var outID = replaceALL(contacts[c].getId(), "http://www.google.com/m8/feeds/contacts/dev-marcelorocha%40quiteoften.co/base/", "");
+                    let outID = replaceALL(contacts[c].getId(), "http://www.google.com/m8/feeds/contacts/" + _email + "/base/", "");
 
-                    var retJSON = "";
+                    let retJSON = "";
                     retJSON += "{";
                     retJSON += "    'index': " + countResult.toString() + ",";
                     retJSON += "    'id': '" + outID + "',";
@@ -831,9 +837,9 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                     if (param_SearchProfilePhotoInPeopleAPI == true)
                     {
                         // search the array with contact photos, looking for the register with the same id     
-                        for (var x = 0 ; x < aPeopleContactPhotos.length ; x++)
+                        for (let x = 0 ; x < aPeopleContactPhotos.length ; x++)
                         {      
-                            var person = JSON.parse(aPeopleContactPhotos[x]);
+                            let person = JSON.parse(aPeopleContactPhotos[x]);
 
                             Logger.log("aPeopleContactPhotos[" + x.toString() + "] = " + aPeopleContactPhotos[x]);
                             Logger.log("person.id = " + person.id);
@@ -882,7 +888,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         
         // console.log("-- aRetResults_temp - CONTATOS --");
         // console.log("aRetResults_temp.length: " + aRetResults_temp.length.toString()); 
-        // for (var countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
+        // for (let countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
         // {
         //     console.log("aRetResults_temp[" + countContact.toString() + "] = " + aRetResults_temp[countContact]);    
         // }
@@ -903,7 +909,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         try
         {
             
-            var options = {
+            let options = {
                 maxResults: 300,
                 customer: 'my_customer',
                 projection: 'basic',
@@ -940,7 +946,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
             
             do 
             {                
-                var response = AdminDirectory.Users.list(options);
+                let response = AdminDirectory.Users.list(options);
 
                 //console.log("response = " + response.users);
                 
@@ -948,7 +954,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                 {
                     response.users.forEach(function(user) {
 
-                        var retJSON = "";
+                        let retJSON = "";
                         retJSON += "{";
                         retJSON += "    'index': " + countResult.toString() + ",";
                         retJSON += "    'id': '" + user.id + "',";
@@ -1004,7 +1010,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
         // console.log("-- aRetResults_temp - DIRECTORY --");
         // console.log("aRetResults_temp.length: " + aRetResults_temp.length.toString()); 
-        // for (var countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
+        // for (let countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
         // {
         //     console.log("aRetResults_temp[" + countContact.toString() + "] = " + aRetResults_temp[countContact]);    
         // }
@@ -1028,22 +1034,22 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         // clean results removing duplicate, only if searched for email AND name
         if ((lookInEmail == true) && (lookInName == true))
         {
-            for (var countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
+            for (let countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
             {
                 //console.log("aRetResults_temp[" + countContact.toString() + "] = " + aRetResults_temp[countContact]);  
 
-                var temp_contact = JSON.parse(aRetResults_temp[countContact]);
+                let temp_contact = JSON.parse(aRetResults_temp[countContact]);
 
                 //console.log("aRetResults_temp[" + countContact.toString() + "].id = " + temp_contact.id);    
 
-                var allowInsert = true;
+                let allowInsert = true;
 
 
-                for (var x = 0 ; x < aRetResults_NoDuplicated.length ; x++)
+                for (let x = 0 ; x < aRetResults_NoDuplicated.length ; x++)
                 {
                     if (trim(aRetResults_NoDuplicated[x]) != "")
                     {
-                        var temp_contact2 = JSON.parse(aRetResults_NoDuplicated[x]);
+                        let temp_contact2 = JSON.parse(aRetResults_NoDuplicated[x]);
 
                         if (temp_contact.id == temp_contact2.id)
                         {
@@ -1062,7 +1068,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
             // console.log("-- aRetResults_NoDuplicated - NO_DUPLICATED --");
             // console.log("aRetResults_NoDuplicated.length: " + aRetResults_NoDuplicated.length.toString()); 
-            // for (var countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
+            // for (let countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
             // {
             //     console.log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
             // }
@@ -1074,7 +1080,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         else
         {
 
-            for (var countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
+            for (let countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
             {
                 // console.log("aRetResults_temp[" + countContact.toString() + "] = " + aRetResults_temp[countContact]);    
 
@@ -1089,11 +1095,11 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         if (unifyOrderBy == true)
         {
 
-            for (var countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
+            for (let countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
             {
                 //console.log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
     
-                var temp_contact2 = JSON.parse(aRetResults_NoDuplicated[countContact]);
+                let temp_contact2 = JSON.parse(aRetResults_NoDuplicated[countContact]);
     
                 if (orderBy == "EMAIL")
                 {
@@ -1109,11 +1115,11 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
             aTemp_Name.sort();
     
             // create the final array that will be returned
-            for (var countContact = 0 ; countContact < aTemp_Name.length ; countContact++)
+            for (let countContact = 0 ; countContact < aTemp_Name.length ; countContact++)
             {
                 //console.log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
     
-                var indexArrOriginal = aTemp_Name[countContact].split("|")[1];
+                let indexArrOriginal = aTemp_Name[countContact].split("|")[1];
     
                 aRetResults_final.push(aRetResults_NoDuplicated[indexArrOriginal]);
             }
@@ -1121,7 +1127,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
             
             // console.log("-- aRetResults_final - unifyOrderBy = TRUE --");
             // console.log("aRetResults_final.length: " + aRetResults_final.length.toString()); 
-            // for (var countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
+            // for (let countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
             // {
             //     console.log("aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
             // }
@@ -1136,11 +1142,11 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         {
             // not unified: separate results in CONTACTS and DIRECTORY
             // 1st pass: contacts
-            for (var countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
+            for (let countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
             {
                 //console.log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
 
-                var temp_contact2 = JSON.parse(aRetResults_NoDuplicated[countContact]);
+                let temp_contact2 = JSON.parse(aRetResults_NoDuplicated[countContact]);
 
                 if (temp_contact2.source == "CONTACTS")
                 {
@@ -1160,11 +1166,11 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
 
             // create the final array that will be returned
-            for (var countContact = 0 ; countContact < aTemp_Name.length ; countContact++)
+            for (let countContact = 0 ; countContact < aTemp_Name.length ; countContact++)
             {
                 //console.log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
 
-                var indexArrOriginal = aTemp_Name[countContact].split("|")[1];
+                let indexArrOriginal = aTemp_Name[countContact].split("|")[1];
 
                 aRetResults_final.push(aRetResults_NoDuplicated[indexArrOriginal]);
             }
@@ -1172,7 +1178,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
             
             // console.log("-- aRetResults_final - unifyOrderBy = FALSE - 1st pass >> CONTACTS --");
             // console.log("aRetResults_final.length: " + aRetResults_final.length.toString()); 
-            // for (var countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
+            // for (let countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
             // {
             //     console.log("aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
             // }
@@ -1185,11 +1191,11 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
                 aTemp_Name = []
                 
-                for (var countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
+                for (let countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
                 {
                     //console.log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
 
-                    var temp_contact2 = JSON.parse(aRetResults_NoDuplicated[countContact]);
+                    let temp_contact2 = JSON.parse(aRetResults_NoDuplicated[countContact]);
 
                     if (temp_contact2.source == "DIRECTORY")
                     {
@@ -1210,18 +1216,18 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
 
                 // update the final array that will be returned
-                for (var countContact = 0 ; countContact < aTemp_Name.length ; countContact++)
+                for (let countContact = 0 ; countContact < aTemp_Name.length ; countContact++)
                 {
                     //console.log("aTemp_Name[" + countContact.toString() + "] = " + aTemp_Name[countContact]);    
 
-                    var indexArrOriginal = aTemp_Name[countContact].split("|")[1];
+                    let indexArrOriginal = aTemp_Name[countContact].split("|")[1];
 
                     aRetResults_final.push(aRetResults_NoDuplicated[indexArrOriginal]);
                 }
 
                 // console.log("-- aRetResults_final - unifyOrderBy = FALSE - 2nd pass >> DIRECTORY --");
                 // console.log("aRetResults_final.length: " + aRetResults_final.length.toString()); 
-                // for (var countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
+                // for (let countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
                 // {
                 //     console.log("aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
                 // }
@@ -1232,15 +1238,15 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         }
 
 
-        var aRetResults_return = [];
+        let aRetResults_return = [];
 
         // finally, fix the index and return the array
-        for (var countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
+        for (let countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
         {
             // console.log("console = aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
             // Logger.log("Logger = aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
 
-            var temp_contact2 = JSON.parse(aRetResults_final[countContact]);
+            let temp_contact2 = JSON.parse(aRetResults_final[countContact]);
 
             temp_contact2.index = countContact.toString();
             
@@ -1250,7 +1256,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
         // console.log("-- FINAL --");
         // console.log("aRetResults_return.length: " + aRetResults_return.length.toString()); 
-        // for (var countContact = 0 ; countContact < aRetResults_return.length ; countContact++)
+        // for (let countContact = 0 ; countContact < aRetResults_return.length ; countContact++)
         // {
         //     console.log("aRetResults_return[" + countContact.toString() + "] = " + aRetResults_return[countContact]);    
         // }
@@ -1281,7 +1287,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
 
 // function addUserToDirectory() {
-//     var user = {
+//     let user = {
 //       primaryEmail: 'testeteste@teste.com',
 //       name: {
 //         givenName: 'Joao',
