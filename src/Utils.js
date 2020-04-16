@@ -389,80 +389,80 @@ function replaceALL(stringSearched, findString, replaceWith)
 function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAME", unifyOrderBy=true)
 {
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// History:
-// 16:23:00 14/04/2020 (murch): added: function searchs for the contact profile photo, in the People API
-// 12:31:00 09/04/2020 (murch): function creation
-// 
-// ==========================================
-//
-// Calling examples: ("" can default to "ALL" or "NAME" or true, depending on witch parameter we are looking)
-//
-// var retFunc = getPeople("Marcelo", "NAME", "ALL", "NAME", true);
-// console.log(JSON.stringfy(retFunc));
-//
-// var retFunc = getPeople("Joao");
-// console.log(JSON.stringfy(retFunc));
-//
-// var retFunc = getPeople("", "", "CONTACTS", "NAME"); // get all contacts 
-// console.log(JSON.stringfy(retFunc));
-//
-// var retFunc = getPeople("Andre", "ALL", "ALL", "NAME", false);
-// console.log(JSON.stringfy(retFunc));
-//
-//
-// ------------------------------------------
-// Auth scope needed, in appscript.json:
-// ------------------------------------------
-//
-// for admin contacts (Admin Directory API):
-// "https://www.google.com/m8/feeds",
-// "https://www.googleapis.com/auth/admin.directory.user",
-//
-// for profile photo (People API):
-// "https://www.googleapis.com/auth/userinfo.profile"
-//
-// ------------------------------------------
-// Return:
-// ------------------------------------------
-// if an error occours:
-// returns: -1|description of the error
-// 
-// if the search resulted zero results found:
-// returns: 0|No results found for searched text
-//
-// if the search resulted in one or more results:
-// returns: intWithTheTotalNumberOfResults|theJSONbellow
-//
-// The JSON with the results,:
-// JSON with an array of people that were found, in the following example format:
-//
-// {
-//     [
-//         {
-//             "index": 0,
-//             "id": "http://www.google.com.br/ewe/longandstrangegoogleid",
-//             "source": "CONTACTS",
-//             "name": "Marcelo Josefino",
-//             "primaryEmail": "marcelo@wefwef.com",
-//             "thumbnailPhotoUrl": "http://www.qwdqwd.com/foto2.png"
-//         },    
-//         {
-//             "index": 1,
-//             "id": "JKS62H2K3",
-//             "source": "DIRECTORY",
-//             "name": "Marcelo Rocha",
-//             "primaryEmail": "murch@pobox.com",
-//             "thumbnailPhotoUrl": "http://www.qwdqwd.com/foto.png"
-//         }
-//     ]
-// }
-//
-// Using the example above, the return would be:
-// 2|{[{"index": 0,"id": "http://www.google.com.br/ewe/longandstrangegoogleid", "sour... the rest of the json.
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    // History:
+    // 16:23:00 14/04/2020 (murch): added: function searchs for the contact profile photo, in the People API
+    // 12:31:00 09/04/2020 (murch): function creation
+    // 
+    // ==========================================
+    //
+    // Calling examples: ("" can default to "ALL" or "NAME" or true, depending on witch parameter we are looking)
+    //
+    // var retFunc = getPeople("Marcelo", "NAME", "ALL", "NAME", true);
+    // console.log(JSON.stringfy(retFunc));
+    //
+    // var retFunc = getPeople("Joao");
+    // console.log(JSON.stringfy(retFunc));
+    //
+    // var retFunc = getPeople("", "", "CONTACTS", "NAME"); // get all contacts 
+    // console.log(JSON.stringfy(retFunc));
+    //
+    // var retFunc = getPeople("Andre", "ALL", "ALL", "NAME", false);
+    // console.log(JSON.stringfy(retFunc));
+    //
+    //
+    // ------------------------------------------
+    // Auth scope needed, in appscript.json:
+    // ------------------------------------------
+    //
+    // for admin contacts (Admin Directory API):
+    // "https://www.google.com/m8/feeds",
+    // "https://www.googleapis.com/auth/admin.directory.user",
+    //
+    // for profile photo (People API):
+    // "https://www.googleapis.com/auth/userinfo.profile"
+    //
+    // ------------------------------------------
+    // Return:
+    // ------------------------------------------
+    // if an error occours:
+    // returns: -1|description of the error
+    // 
+    // if the search resulted zero results found:
+    // returns: 0|No results found for searched text
+    //
+    // if the search resulted in one or more results:
+    // returns: intWithTheTotalNumberOfResults|theJSONbellow
+    //
+    // The JSON with the results,:
+    // JSON with an array of people that were found, in the following example format:
+    //
+    // {
+    //     [
+    //         {
+    //             "index": 0,
+    //             "id": "http://www.google.com.br/ewe/longandstrangegoogleid",
+    //             "source": "CONTACTS",
+    //             "name": "Marcelo Josefino",
+    //             "primaryEmail": "marcelo@wefwef.com",
+    //             "thumbnailPhotoUrl": "http://www.qwdqwd.com/foto2.png"
+    //         },    
+    //         {
+    //             "index": 1,
+    //             "id": "JKS62H2K3",
+    //             "source": "DIRECTORY",
+    //             "name": "Marcelo Rocha",
+    //             "primaryEmail": "murch@pobox.com",
+    //             "thumbnailPhotoUrl": "http://www.qwdqwd.com/foto.png"
+    //         }
+    //     ]
+    // }
+    //
+    // Using the example above, the return would be:
+    // 2|{[{"index": 0,"id": "http://www.google.com.br/ewe/longandstrangegoogleid", "sour... the rest of the json.
+    //
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     logStack("getPeople");
 
@@ -548,8 +548,8 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         // bellow, after this next try/catch block, we have the actual code witch gets the contacts from the ContactsApp
         if (param_SearchProfilePhotoInPeopleAPI == true)
         {
-            // try
-            // {
+            try
+            {
 
                 // code just to get the contacts profile photos, witch reside in the People API:
                 var aPeopleContactPhotos = [];
@@ -727,20 +727,20 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                 // this array will be used below, where finishing the results
     
 
-            // }
-            // catch(error)
-            // {
-            //     retFunc = "-1|PeopleContacts: " + error.stack;
-            //     return retFunc;
-            // }        
+            }
+            catch(error)
+            {
+                retFunc = "-1|PeopleContacts: " + error.stack;
+                return retFunc;
+            }        
 
         }
 
 
 
         // now, the code that gets the contacts. Later, in this next try/catch block, the photo url will be replaced by the one found in the People API
-        // try
-        // {
+        try
+        {
             // if searching for name and email, it takes 2 rounds of search. DEfault is 1 round only
             var rounds = 1;
 
@@ -835,9 +835,9 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                         {      
                             var person = JSON.parse(aPeopleContactPhotos[x]);
 
-                            // Logger.log("aPeopleContactPhotos[" + x.toString() + "] = " + aPeopleContactPhotos[x]);
-                            // Logger.log("person.id = " + person.id);
-                            // Logger.log("outID = " + outID);
+                            Logger.log("aPeopleContactPhotos[" + x.toString() + "] = " + aPeopleContactPhotos[x]);
+                            Logger.log("person.id = " + person.id);
+                            Logger.log("outID = " + outID);
 
                             if (person.id == outID)
                             {
@@ -870,12 +870,12 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
             }
             
 
-        // }
-        // catch(error)
-        // {
-        //     retFunc = "-1|" + error.stack;
-        //     return retFunc;
-        // }
+        }
+        catch(error)
+        {
+            retFunc = "-1|" + error.stack;
+            return retFunc;
+        }
 
 
 
@@ -900,8 +900,8 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
     if (lookInDirectory == true)
     {
         
-        // try
-        // {
+        try
+        {
             
             var options = {
                 maxResults: 300,
@@ -935,6 +935,8 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                 options.query = "email:'" + searchText + "*'"
             }
             
+            //Logger.log("options = " + JSON.stringify(options));
+
             
             do 
             {                
@@ -993,12 +995,12 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
             } while (response.nextPageToken);
    
-        // }
-        // catch(error)
-        // {
-        //     retFunc = "-1|" + error;
-        //     return retFunc;
-        // }
+        }
+        catch(error)
+        {
+            retFunc = "-1|" + error.stack;
+            return retFunc;
+        }
 
         // console.log("-- aRetResults_temp - DIRECTORY --");
         // console.log("aRetResults_temp.length: " + aRetResults_temp.length.toString()); 
@@ -1058,6 +1060,16 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
             }
 
+            // console.log("-- aRetResults_NoDuplicated - NO_DUPLICATED --");
+            // console.log("aRetResults_NoDuplicated.length: " + aRetResults_NoDuplicated.length.toString()); 
+            // for (var countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
+            // {
+            //     console.log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
+            // }
+            // console.log("-- END aRetResults_NoDuplicated - NO_DUPLICATED --");
+            
+            
+
         }
         else
         {
@@ -1106,6 +1118,18 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                 aRetResults_final.push(aRetResults_NoDuplicated[indexArrOriginal]);
             }
 
+            
+            // console.log("-- aRetResults_final - unifyOrderBy = TRUE --");
+            // console.log("aRetResults_final.length: " + aRetResults_final.length.toString()); 
+            // for (var countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
+            // {
+            //     console.log("aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
+            // }
+            // console.log("-- END aRetResults_final - unifyOrderBy = TRUE --");
+            
+            
+
+
 
         }
         else
@@ -1146,45 +1170,65 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
             }
             
             
-            // 2nd pass: DIRECTORY
-
-            aTemp_Name = []
+            // console.log("-- aRetResults_final - unifyOrderBy = FALSE - 1st pass >> CONTACTS --");
+            // console.log("aRetResults_final.length: " + aRetResults_final.length.toString()); 
+            // for (var countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
+            // {
+            //     console.log("aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
+            // }
+            // console.log("-- END aRetResults_final - unifyOrderBy = FALSE - 1st pass >> CONTACTS  --");
             
-            for (var countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
+            
+            if (lookInDirectory == true)
             {
-                //console.log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
+                // 2nd pass: DIRECTORY
 
-                var temp_contact2 = JSON.parse(aRetResults_NoDuplicated[countContact]);
-
-                if (temp_contact2.source == "DIRECTORY")
-                {
-                    if (orderBy == "EMAIL")
-                    {
-                        aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
-                    }
-                    else
-                    {
-                        aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
-                    }
-                }
+                aTemp_Name = []
                 
+                for (var countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
+                {
+                    //console.log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
+
+                    var temp_contact2 = JSON.parse(aRetResults_NoDuplicated[countContact]);
+
+                    if (temp_contact2.source == "DIRECTORY")
+                    {
+                        if (orderBy == "EMAIL")
+                        {
+                            aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
+                        }
+                        else
+                        {
+                            aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                        }
+                    }
+                    
+                }
+
+
+                aTemp_Name.sort();
+
+
+                // update the final array that will be returned
+                for (var countContact = 0 ; countContact < aTemp_Name.length ; countContact++)
+                {
+                    //console.log("aTemp_Name[" + countContact.toString() + "] = " + aTemp_Name[countContact]);    
+
+                    var indexArrOriginal = aTemp_Name[countContact].split("|")[1];
+
+                    aRetResults_final.push(aRetResults_NoDuplicated[indexArrOriginal]);
+                }
+
+                // console.log("-- aRetResults_final - unifyOrderBy = FALSE - 2nd pass >> DIRECTORY --");
+                // console.log("aRetResults_final.length: " + aRetResults_final.length.toString()); 
+                // for (var countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
+                // {
+                //     console.log("aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
+                // }
+                // console.log("-- END aRetResults_final - unifyOrderBy = FALSE - 2nd pass >> DIRECTORY  --");                
+
+
             }
-
-
-            aTemp_Name.sort();
-
-
-            // update the final array that will be returned
-            for (var countContact = 0 ; countContact < aTemp_Name.length ; countContact++)
-            {
-                //console.log("aTemp_Name[" + countContact.toString() + "] = " + aTemp_Name[countContact]);    
-
-                var indexArrOriginal = aTemp_Name[countContact].split("|")[1];
-
-                aRetResults_final.push(aRetResults_NoDuplicated[indexArrOriginal]);
-            }
-
-
         }
 
 
@@ -1193,7 +1237,8 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         // finally, fix the index and return the array
         for (var countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
         {
-            //console.log("aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
+            // console.log("console = aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
+            // Logger.log("Logger = aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
 
             var temp_contact2 = JSON.parse(aRetResults_final[countContact]);
 

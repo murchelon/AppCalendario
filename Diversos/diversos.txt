@@ -9,3 +9,11 @@
     "https://www.googleapis.com/auth/script.external_request",
     "https://www.google.com/m8/feeds"
   ],
+
+
+
+  {
+    "scriptId": "1kcirKMHElWVFz9Ma4UeyznpaimPH49gbPS_hT97cNcUR6MAITIBZH5M_",
+    "rootDir": "F:\\GITREP\\GoogleAppScript\\AppCalendario\\src",
+    "projectId": "quiteoften-nodejs-api"
+}
