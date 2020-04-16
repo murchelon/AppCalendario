@@ -1,0 +1,60 @@
+{
+  "timeZone": "America/Sao_Paulo",
+  "dependencies": {
+    "enabledAdvancedServices": [
+      {
+        "userSymbol": "Gmail",
+        "serviceId": "gmail",
+        "version": "v1"
+      },
+      {
+        "userSymbol": "AdminDirectory",
+        "serviceId": "admin",
+        "version": "directory_v1"
+      },
+      {
+        "userSymbol": "People",
+        "serviceId": "peopleapi",
+        "version": "v1"
+      }
+    ]
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/gmail.addons.execute",
+    "https://www.google.com/m8/feeds",
+    "https://www.googleapis.com/auth/admin.directory.user",
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "https://www.googleapis.com/auth/script.locale"
+  ],
+  "runtimeVersion": "V8",
+  "gmail": {
+    "name": "AppCalendario",
+    "logoUrl": "https://image.flaticon.com/icons/png/512/55/55281.png",
+    "homepageTrigger": {
+      "runFunction": "Main"
+    },
+    "primaryColor": "#2d75a8",
+    "secondaryColor": "#6faad4",
+    "openLinkUrlPrefixes": [
+      "https://www.rockdev.com.br"
+    ],
+    "version": "TRUSTED_TESTER_V2",
+    "universalActions": [
+      {
+        "text": "Settings",
+        "runFunction": "render_OptSettings"
+      }
+    ]
+  },
+  "addOns": {
+    "common": {
+      "name": "AppCalendario",
+      "logoUrl": "https://image.flaticon.com/icons/png/512/55/55281.png",
+      "useLocaleFromApp": true,
+      "homepageTrigger": {
+        "enabled": false
+      }
+    }
+  }
+}
