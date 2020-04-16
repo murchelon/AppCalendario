@@ -238,6 +238,10 @@ function clean(theString)
 {  
     var ret = "";
 
+    if (typeof(theString) === "undefined")
+    {
+        theString = "";
+    }
 
     if (theString != "" && theString != null)
     {
@@ -807,7 +811,15 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
                     if (contacts[c].getEmails().length > 0)
                     {
-                        retJSON += "    'primaryEmail': '" + contacts[c].getEmails()[0].getAddress() + "',";
+                        if (clean(contacts[c].getEmails()[0].getAddress()) != "")
+                        {
+                            retJSON += "    'primaryEmail': '" + contacts[c].getEmails()[0].getAddress() + "',";
+                        }
+                        else
+                        {
+                            retJSON += "    'primaryEmail': '',";
+                        }
+                        
                     }
                     else
                     {

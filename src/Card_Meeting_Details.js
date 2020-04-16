@@ -17,10 +17,24 @@ function render_Meeting_Details(action, person)
     let rep = ['1', '2', '3', '4'];
     let weekMonth = ['Week', 'Month'];    
  
+    let outEmail = "";
+
+
+    Logger.log("person.primaryEmail = " + clean(person.primaryEmail));
+
+    if (clean(person.primaryEmail) == "")
+    {
+        outEmail = "[e-mail in blank]";
+    }
+    else
+    {
+        outEmail = person.primaryEmail;
+    }
+
     // create the header
     let card_Header = CardService.newCardHeader()
         .setTitle(person.name)
-        .setSubtitle(person.primaryEmail)        
+        .setSubtitle(outEmail)        
         .setImageStyle(CardService.ImageStyle.CIRCLE)
         .setImageUrl(person.thumbnailPhotoUrl);
 
@@ -109,7 +123,7 @@ function render_Meeting_Details(action, person)
             id: person.id,
             source: person.source,
             name: person.name,
-            primaryEmail: person.primaryEmail,
+            primaryEmail: outEmail,
             thumbnailPhotoUrl: person.thumbnailPhotoUrl
             });
             

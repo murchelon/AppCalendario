@@ -66,11 +66,11 @@ function render_Card_SearchPeopleResults(event, result_JSON, txtToSearch)
 
     if (parseInt(TotalFound) >= 2)
     {
-        outTotalFoundText += " person found";
+        outTotalFoundText += " people found";
     }
     else
     {
-        outTotalFoundText += " people found";
+        outTotalFoundText += " person found";
     }
 
     // console.log("objResults = " + objResults);
@@ -219,14 +219,22 @@ function onClick_btnDoSearch(event)
 
 function onClick_widgetContact(event)
 {
-    logStack("onClick_btnDoSearch");
+    logStack("onClick_widgetContact");
 
     let person = event.parameters;
     let acao = "NEW";
 
-    Logger.log("person = " + person.name);
+    //Logger.log("person1 = " + person.primaryEmail);
 
-    return render_Meeting_Details(acao, person);
+    if (clean(person.primaryEmail) == "")
+    {
+        return showPopMsg("The e-mail from this person is in blank. Please choose someone with a registered e-mail");
+    }
+    else
+    {
+        return render_Meeting_Details(acao, person);
+    }
+    
 }
 
 

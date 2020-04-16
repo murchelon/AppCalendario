@@ -13,7 +13,7 @@ function gGlobalVars()
         //DB_Base: "MYSQL",    
         //DB_Address: "to1-271017:southamerica-east1:onetoone2",    
         //DB_User: "onetoone_user",    
-        //DB_Password: "vidanovad06m05!",    
+        //DB_Password: "vidakk!",    
         //DB_Name: "onetoone1"
 
       
