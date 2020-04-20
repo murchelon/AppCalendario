@@ -28,7 +28,7 @@
     "https://www.googleapis.com/auth/script.locale",
     "https://www.googleapis.com/auth/userinfo.email"
   ],
-  "runtimeVersion": "V8",
+  "runtimeVersion": "DEPRECATED_ES5",
   "gmail": {
     "name": "AppCalendario",
     "logoUrl": "https://image.flaticon.com/icons/png/512/55/55281.png",

@@ -1,4 +1,5 @@
 
+
 function gGlobalVars()
 {
     const variables = 
@@ -28,8 +29,8 @@ function DB_OpenConnection()
   
     logStack("DB_OpenConnection");
   
-    let instanceUrl = 'jdbc:mysql://' + gGlobalVars().DB_Address;
-    let dbUrl = instanceUrl + '/' + gGlobalVars().DB_Name;
+    let instanceUrl = "jdbc:mysql://" + gGlobalVars().DB_Address;
+    let dbUrl = instanceUrl + "/" + gGlobalVars().DB_Name;
 
     gDB_objConn = Jdbc.getConnection(dbUrl, gGlobalVars().DB_User, gGlobalVars().DB_Password);
 

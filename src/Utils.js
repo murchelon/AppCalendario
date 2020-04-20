@@ -1,377 +1,101 @@
-//Get the current message opened
-function TestBIB()
+
+// Teste function or unit test
+function TesteUnitCall()
 { 
-    logStack("TestBIB");
+    logStack("TesteUnitCall");
 
     //getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
 
-    let retFunc = getPeople("", "ALL", "CONTACTS", "NAME", true);
+    // let retFunc = getPeople("", "ALL", "ALL", "NAME", true);
+    // console.log("retFunc: " + retFunc);
+
+    let retFunc = isLoggerUserFromDirectory();
     console.log("retFunc: " + retFunc);
 
 }
 
-
-
-//Get the current message opened
-function TEST_GetProfilePhotosFromPeople()
+function isLoggerUserFromDirectory()
 { 
-    logStack("TEST_GetProfilePhotosFromPeople");
+    logStack("isLoggerUserFromDirectory");
 
-    let people = People.People.Connections.list('people/me', {
-        personFields: 'names,photos'
-    });
+    let retFunc = "-1|Initial value";
 
+    let loggedUserEmail = Session.getEffectiveUser().getEmail();
     
-    let json1 = JSON.parse(people);
-
-    //Logger.log(JSON.stringify(json1));
-    
- 
-    Logger.log("============================");
-
-
-    for (let item in json1)
+    if (clean(loggedUserEmail) == "")
     {
-        if (item == "totalItems")
-        {
-            let totalItensFound = json1[item]
-        }
+        retFunc = "-1|The e-mail from the logged user was not found";
+        return retFunc;
+    }
+
+    loggedUserEmail = "gabriel@quiteoften.co";
+    let options = loggedUserEmail;
+
+    // try
+    // {
         
-        if (item == "connections")
-        {        
-            //Logger.log("ITEM: " + item + " = " + json1[item]);
+        // let options = {
+        //     maxResults: 300,
+        //     customer: 'my_customer',
+        //     projection: 'basic',
+        //     viewType: 'domain_public',                
+        //     sortOrder: 'ASCENDING',
+        // };
+      
+        // options.orderBy = "email";
+
+        // options.query = "email:'" + loggedUserEmail + "'"
+
+        
+        
+        //Logger.log("options = " + JSON.stringify(options));
+
+        
+        do 
+        {                
+            var response = AdminDirectory.Users.get(options);
+
+            //console.log("response = " + response.users);
             
-            for (let connection in json1[item])
+            if (typeof(response.users) !== "undefined")
             {
-                //Logger.log("== CONNECTION: " + connection + " = " + json1[item][connection]);
-                
-                for (let attributes in json1[item][connection])
-                {
-                    //Logger.log("== ATTR: " + attributes + " = " + json1[item][connection][attributes]);
+                response.users.forEach(function(user) {
 
-                    if (attributes == "resourceName")
-                    {
-                        let contact_resourceName = json1[item][connection][attributes];
-                    }
-                    
-                    if (attributes == "etag")
-                    {
-                        let contact_etag = json1[item][connection][attributes];
-                    }
-                        
-                    if (attributes == "names")
-                    {
-                        for (let names in json1[item][connection][attributes])
-                        {
-                            for (let name_detail in json1[item][connection][attributes][names])
-                            {
-                                //Logger.log("== NAME_DETAIL: " + name_detail + " = " + json1[item][connection][attributes][names][name_detail]);
-                                
-                                if (name_detail == "displayName")
-                                {
-                                    let contact_name = json1[item][connection][attributes][names][name_detail];
-                                }
-                                
-                                if (name_detail == "metadata")
-                                {
-                                    for (let metadata in json1[item][connection][attributes][names][name_detail])
-                                    {                                    
-                                        //Logger.log("== NAME_DETAIL_METADATA: " + metadata + " = " + json1[item][connection][attributes][names][name_detail][metadata]);
-                                        
-                                        if (metadata == "source")
-                                        {
-                                            for (let source in json1[item][connection][attributes][names][name_detail][metadata])
-                                            {                                            
-                                                //Logger.log("== NAME_DETAIL_METADATA_SOURCE: " + source + " = " + json1[item][connection][attributes][names][name_detail][metadata][source]);
-                                                
-                                                if (source == "id")
-                                                {                                                
-                                                    let contact_id = json1[item][connection][attributes][names][name_detail][metadata][source]
-                                                }
-                                                
-                                            }
+                    console.log("user.id  = " + user.id);
+                    console.log("user.name.fullName   = " + user.name.fullName );
+                    console.log("user.primaryEmail  = " + user.primaryEmail);
+                     
+                    return "loggedUserEmail = " + loggedUserEmail + " -- achou: user.primaryEmail  = " + user.primaryEmail;
 
-                                        }
-                                     
-                                    }                                
-                                
-                                }
+                    retFunc = "1"
 
-                            }
-                        
-                        }
-                        
-                    }
-                    
-                    
-                    if (attributes == "photos")
-                    {
-                        for (let photos in json1[item][connection][attributes])
-                        {
-                            //Logger.log("== PHOTOS: " + photos + " = " + json1[item][connection][attributes][photos]);
-                            
-                            for (let photo_detail in json1[item][connection][attributes][photos])
-                            {
-                                //Logger.log("== PHO_DETAIL: " + photo_detail + " = " + json1[item][connection][attributes][photos][photo_detail]);
-                                
-                                if (photos == "0")
-                                {
-                                    //Logger.log("== PHO_DETAIL: " + photo_detail + " = " + json1[item][connection][attributes][photos][photo_detail]);
-                                    
-                                    if (photo_detail == "url")
-                                    {
-                                        let contact_photo = json1[item][connection][attributes][photos][photo_detail];
-                                    }
-                                
-                                }
-                                
-                            }
-                        
-                        }                        
-
-                    }                                
-                    
-                }
-                
-                Logger.log("FINAL: contact_id = " + contact_id);
-                Logger.log("FINAL: contact_name = " + contact_name);
-                Logger.log("FINAL: contact_photo = " + contact_photo);
-                Logger.log("FINAL: contact_resourceName = " + contact_resourceName);
-                Logger.log("FINAL: contact_etag = " + contact_etag);
-                Logger.log("============================");     
-
+                });
             }
-        }
-    }
+
+            // For domains with many users, the results are paged
+            if (response.nextPageToken) 
+            {
+                options.pageToken = response.nextPageToken;
+            }
+
+        } while (response.nextPageToken);
+
+    return "nao achou loggedUserEmail = " + loggedUserEmail;
+
+    // }
+    // catch(error)
+    // {
+    //     retFunc = "-1|" + error.stack;
+    //     //retFunc = "0";
+    //     return retFunc;
+    // }
+
+
+    return retFunc;
     
-    Logger.log("FINAL: totalItensFound = " + totalItensFound);
-    
-    // accountId = "a6d2e8a8e8166ab";
 
-    // let people = People.People.get('people/' + accountId, {
-    //     personFields: 'names,emailAddresses,coverPhotos,photos'
-    // });
-
-    // Logger.log('Public Profile: %s', JSON.stringify(people, null, 2));
-
-    Logger("ok estou no final");
-    
 }
 
-
-
-
-function getCurrentMessage(event)
-{
-    logStack("getCurrentMessage");
-    let accessToken = event.messageMetadata.accessToken;
-    let messageId = event.messageMetadata.messageId;
-
-    GmailApp.setCurrentMessageAccessToken(accessToken);
-
-    return GmailApp.getMessageById(messageId);
-}
-
-
-//Get a string in ISO date format, from a given date. returns string: YYYY-MM-DD HH:MM:SS
-function isoDate(theDate)
-{
-    let ret = "";
-
-    if (theDate != "" && theDate != null)
-    {
-        let ret = theDate.toISOString();
-
-        ret = trim(ret);
-        ret = ret.replace("T", " ");
-        ret = left(ret, 19);
-    }
- 
-    return ret; 
-}
-
-
-//Get the left-most N caracters from a string
-function left(theString, Size)
-{
-    let ret = "";
-
-    if (theString != "" && theString != null)
-    {
-        ret = theString.substring(0, Size);
-    }
- 
-    return ret; 
-}
-
-
-//Get the right-most N caracters from a string
-function right(theString, Size)
-{
-    let ret = "";
-
-    if (theString != "" && theString != null)
-    {
-        ret = theString.substring(theString.length - Size, theString.length);
-    }
- 
-    return ret; 
-}
-
-
-// trim the string
-function trim(theString)
-{  
-    let ret = "";
-
-    if (theString != "" && theString != null)
-    {
-        ret = theString.replace(/^\s+|\s+$/g,'');
-    }
- 
-    return ret; 
-}
-
-
-// clean the string removing non printable chars and others that might be handfull. Also trims the string
-function clean(theString)
-{  
-    let ret = "";
-
-    if (typeof(theString) === "undefined")
-    {
-        theString = "";
-    }
-
-    if (theString != "" && theString != null)
-    {
-        ret = theString.toString();
-        ret = trim(ret);
-        ret = ret.replace(String.fromCharCode(160), "");
-        ret = ret.replace(String.fromCharCode(150), "");
-        ret = ret.replace("'", "´");
-    }
- 
-    return ret; 
-}
-
-
-// Shows a popup msg in the user screen. Usage: return showPopMsg("this is a test");
-// usage: return showPopMsg("texto to show");
-function showPopMsg(Message) 
-{
-    logStack("showPopMsg");
-    return CardService.newActionResponseBuilder()
-    .setNotification(CardService.newNotification()
-        .setText(Message))
-    .build();
-}
-
-function logStack(theFunc)
-{
-    Logger.log("STACK>> " + theFunc + "()");
-}
-
-
-function Log(Message)
-{
-    Logger.log("LOG>> " + Message);
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- * addBtnToBtnSet: add an button to be used in a buttonset
- * @param {string} id - The ID defined for the button
- * @param {string} Text - the text that will appear in the button
- * @param {string} onClickFunction - The function that will be called when the button is clicked
- * @param {string} isFilled - optional - true or false: defines the visual style of the button
- * @returns {button} returns the created button to be added to a buttonSet
-*/
-function addBtnToBtnSet(id, Text, onClickFunction, isFilled) 
-{
-    logStack("addBtnToBtnSet");
-
-    let local_function = onClickFunction.toString();
-
-    let TypeButton = CardService.TextButtonStyle.TEXT;
-
-    // Button
-    let action = CardService.newAction()
-        .setFunctionName(local_function)
-        .setLoadIndicator(CardService.LoadIndicator.SPINNER)
-        .setParameters({'id': id.toString()});
-    
-    if (isFilled == true)
-    {
-        TypeButton = CardService.TextButtonStyle.FILLED
-    }   
-     
-    
-    let button = CardService.newTextButton()
-        .setText(Text)
-        .setTextButtonStyle(TypeButton)
-        .setBackgroundColor("#315c7a")
-        .setOnClickAction(action);
-    
-    return button;
-}
-
-
-function render_Alert(Message, funcToReturn)
-{
-    logStack("render_Alert");
-
-    
-    let buttonSet_Back = CardService.newButtonSet();
-    buttonSet_Back.addButton(addBtnToBtnSet(1, "Back", funcToReturn.toString(), true));    
-
-    // Render the page, adding all widgets
-    let card = CardService.newCardBuilder()
-        //.setHeader(cardHeader)
-        .addSection(CardService.newCardSection()
-            .addWidget(CardService.newTextParagraph().setText(Message))
-            .addWidget(buttonSet_Back)
-        )
-
-        .build();
-
-    let nav = CardService.newNavigation().pushCard(card);
-        return CardService.newActionResponseBuilder()
-            .setNavigation(nav)
-            .build();
-}
-
-
-
-
-
-
-
-// show some text in the screen, for debug
-// usage: return writeDebugTxtInScreen("texto to show");
-function writeDebugTxtInScreen(theText)
-{
-    logStack("writeDebugTxtInScreen");
-
-    let card_section1 = CardService.newCardSection()
-        .addWidget(CardService.newTextParagraph().setText(theText));
- 
-    let card = CardService.newCardBuilder()
-        .addSection(card_section1)
-        .build();
-
-    return [card];
-}
-
-
-// In javascript the replace function only replaces the first occorence. So, this funcion replaces ALL ocorrences.
-// This IS CASE SENSITIVE
-function replaceALL(stringSearched, findString, replaceWith)
-{
-    return stringSearched.split(findString).join(replaceWith);
-}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -388,80 +112,80 @@ function replaceALL(stringSearched, findString, replaceWith)
 function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAME", unifyOrderBy=true)
 {
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //
-    // History:
-    // 16:23:00 14/04/2020 (murch): added: function searchs for the contact profile photo, in the People API
-    // 12:31:00 09/04/2020 (murch): function creation
-    // 
-    // ==========================================
-    //
-    // Calling examples: ("" can default to "ALL" or "NAME" or true, depending on witch parameter we are looking)
-    //
-    // let retFunc = getPeople("Marcelo", "NAME", "ALL", "NAME", true);
-    // console.log(JSON.stringfy(retFunc));
-    //
-    // let retFunc = getPeople("Joao");
-    // console.log(JSON.stringfy(retFunc));
-    //
-    // let retFunc = getPeople("", "", "CONTACTS", "NAME"); // get all contacts 
-    // console.log(JSON.stringfy(retFunc));
-    //
-    // let retFunc = getPeople("Andre", "ALL", "ALL", "NAME", false);
-    // console.log(JSON.stringfy(retFunc));
-    //
-    //
-    // ------------------------------------------
-    // Auth scope needed, in appscript.json:
-    // ------------------------------------------
-    //
-    // for admin contacts (Admin Directory API):
-    // "https://www.google.com/m8/feeds",
-    // "https://www.googleapis.com/auth/admin.directory.user",
-    //
-    // for profile photo (People API):
-    // "https://www.googleapis.com/auth/userinfo.profile"
-    //
-    // ------------------------------------------
-    // Return:
-    // ------------------------------------------
-    // if an error occours:
-    // returns: -1|description of the error
-    // 
-    // if the search resulted zero results found:
-    // returns: 0|No results found for searched text
-    //
-    // if the search resulted in one or more results:
-    // returns: intWithTheTotalNumberOfResults|theJSONbellow
-    //
-    // The JSON with the results,:
-    // JSON with an array of people that were found, in the following example format:
-    //
-    // {
-    //     [
-    //         {
-    //             "index": 0,
-    //             "id": "http://www.google.com.br/ewe/longandstrangegoogleid",
-    //             "source": "CONTACTS",
-    //             "name": "Marcelo Josefino",
-    //             "primaryEmail": "marcelo@wefwef.com",
-    //             "thumbnailPhotoUrl": "http://www.qwdqwd.com/foto2.png"
-    //         },    
-    //         {
-    //             "index": 1,
-    //             "id": "JKS62H2K3",
-    //             "source": "DIRECTORY",
-    //             "name": "Marcelo Rocha",
-    //             "primaryEmail": "murch@pobox.com",
-    //             "thumbnailPhotoUrl": "http://www.qwdqwd.com/foto.png"
-    //         }
-    //     ]
-    // }
-    //
-    // Using the example above, the return would be:
-    // 2|{[{"index": 0,"id": "http://www.google.com.br/ewe/longandstrangegoogleid", "sour... the rest of the json.
-    //
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// History:
+// 16:23:00 14/04/2020 (murch): added: function searchs for the contact profile photo, in the People API
+// 12:31:00 09/04/2020 (murch): function creation
+// 
+// ==========================================
+//
+// Calling examples: ("" can default to "ALL" or "NAME" or true, depending on witch parameter we are looking)
+//
+// let retFunc = getPeople("Marcelo", "NAME", "ALL", "NAME", true);
+// console.log(JSON.stringfy(retFunc));
+//
+// let retFunc = getPeople("Joao");
+// console.log(JSON.stringfy(retFunc));
+//
+// let retFunc = getPeople("", "", "CONTACTS", "NAME"); // get all contacts 
+// console.log(JSON.stringfy(retFunc));
+//
+// let retFunc = getPeople("Andre", "ALL", "ALL", "NAME", false);
+// console.log(JSON.stringfy(retFunc));
+//
+//
+// ------------------------------------------
+// Auth scope needed, in appscript.json:
+// ------------------------------------------
+//
+// for admin contacts (Admin Directory API):
+// "https://www.google.com/m8/feeds",
+// "https://www.googleapis.com/auth/admin.directory.user",
+//
+// for profile photo (People API):
+// "https://www.googleapis.com/auth/userinfo.profile"
+//
+// ------------------------------------------
+// Return:
+// ------------------------------------------
+// if an error occours:
+// returns: -1|description of the error
+// 
+// if the search resulted zero results found:
+// returns: 0|No results found for searched text
+//
+// if the search resulted in one or more results:
+// returns: intWithTheTotalNumberOfResults|theJSONbellow
+//
+// The JSON with the results,:
+// JSON with an array of people that were found, in the following example format:
+//
+// {
+//     [
+//         {
+//             "index": 0,
+//             "id": "http://www.google.com.br/ewe/longandstrangegoogleid",
+//             "source": "CONTACTS",
+//             "name": "Marcelo Josefino",
+//             "primaryEmail": "marcelo@wefwef.com",
+//             "thumbnailPhotoUrl": "http://www.qwdqwd.com/foto2.png"
+//         },    
+//         {
+//             "index": 1,
+//             "id": "JKS62H2K3",
+//             "source": "DIRECTORY",
+//             "name": "Marcelo Rocha",
+//             "primaryEmail": "murch@pobox.com",
+//             "thumbnailPhotoUrl": "http://www.qwdqwd.com/foto.png"
+//         }
+//     ]
+// }
+//
+// Using the example above, the return would be:
+// 2|{[{"index": 0,"id": "http://www.google.com.br/ewe/longandstrangegoogleid", "sour... the rest of the json.
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     logStack("getPeople");
 
@@ -485,24 +209,57 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
 
     // define default values, if not supplied
-    if ((typeof fieldToSearch === 'undefined') || (fieldToSearch == "")) { fieldToSearch = 'ALL'; }
-    if ((typeof coverage === 'undefined') || (coverage == "")) { coverage = 'ALL'; }
-    if ((typeof orderBy === 'undefined') || (orderBy == "")) { orderBy = 'NAME'; }
-    if ((typeof unifyOrderBy === 'undefined') || (unifyOrderBy == "")) { unifyOrderBy = true; }
+    if ((typeof fieldToSearch === "undefined") || (fieldToSearch == "")) { fieldToSearch = "ALL"; }
+    if ((typeof coverage === "undefined") || (coverage == "")) { coverage = "ALL"; }
+    if ((typeof orderBy === "undefined") || (orderBy == "")) { orderBy = "NAME"; }
+    if ((typeof unifyOrderBy === "undefined") || (unifyOrderBy == "")) { unifyOrderBy = true; }
+
+    // console.log("pqp2 = " + coverage);
+
+    // if ((coverage == "ALL") || (coverage == "CONTACTS"))
+    // {
+    //     lookInContacts = true;
+    // }
+
+    // if ((coverage == "ALL") || (coverage == "DIRECTORY"))
+    // {
+    //     lookInDirectory = true;
+    // }
+
+
+    // if ((coverage == "ALL") || (coverage == "CONTACTS"))
+    // {
+    //     lookInEmail = true;
+    // }
+
+    // if ((coverage == "ALL") || (coverage == "DIRECTORY"))
+    // {
+    //     lookInName = true;
+    // }
+
+
+    // console.log("lookInEmail = " + lookInEmail);
+    // console.log("lookInName = " + lookInName);
+    // console.log("lookInContacts = " + lookInContacts);
+    // console.log("lookInDirectory = " + lookInDirectory);    
+
+    // return;
 
     // // debug:
-    // console.log("fieldToSearch = " + fieldToSearch);
-    // console.log("coverage = " + coverage);
-    // console.log("orderBy = " + orderBy);
-    // console.log("unifyOrderBy = " + unifyOrderBy);
-    // return;
+    console.log("fieldToSearch = " + fieldToSearch);
+    console.log("coverage = " + coverage);
+    console.log("orderBy = " + orderBy);
+    console.log("unifyOrderBy = " + unifyOrderBy);
+    //return;
 
     // clean input to remote unwanted chars
     searchText = clean(searchText);
     searchText = replaceALL(searchText, "*", "");
     
-    fieldToSearch = clean(fieldToSearch.toUpperCase());
-    coverage = clean(coverage.toUpperCase());
+    fieldToSearch = clean(fieldToSearch);
+    coverage = clean(coverage);
+
+    Log("coverage super = " + coverage)
 
     // define some internal parameters
     if ((fieldToSearch == "EMAIL") || (fieldToSearch == "ALL")) {lookInEmail = true;}
@@ -511,12 +268,23 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
     if ((coverage == "CONTACTS") || (coverage == "ALL")) {lookInContacts = true;}
     if ((coverage == "DIRECTORY") || (coverage == "ALL")) {lookInDirectory = true;}
   
+
+    Log("puta que paril");
+
+    console.log("lookInEmail = " + lookInEmail);
+    console.log("lookInName = " + lookInName);
+    console.log("lookInContacts = " + lookInContacts);
+    console.log("lookInDirectory = " + lookInDirectory);
+    return;
+
     // //debug:
     // retFunc = "";
     // retFunc += "fieldToSearch: " + fieldToSearch + " , lookInEmail = " + lookInEmail + ", lookInName = " + lookInName;
     // retFunc += " | ";
-    // retFunc += "coverage: " + coverage + " , lookInContacts = " + lookInContacts + ", lookInDirectory = " + lookInDirectory;
-    // return retFunc;
+    // retFunc += "coverage: " + coverage + " , lookInContacts = " + lookInContacts + ", lookInDirectory = " + lookInDirectory; 
+    
+    // Log(retFunc);
+
 
 
     // returns with error if the params are incorrect
@@ -555,8 +323,8 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                 let contaPeople = 0;
 
                 // create the array with all personal contacts profile photos
-                let people = People.People.Connections.list('people/me', {
-                    personFields: 'names,photos'
+                let people = People.People.Connections.list("people/me", {
+                    personFields: 'names,emailAddresses,metadata'
                 });
                             
                 let json1 = JSON.parse(people);
@@ -568,7 +336,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                 {
                     if (item == "totalItems")
                     {
-                        let totalItensFound = json1[item]
+                        var totalItensFound = json1[item]
                     }
                     
                     if (item == "connections")
@@ -579,27 +347,27 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                         {
                             //Logger.log("== CONNECTION: " + connection + " = " + json1[item][connection]);
                             
-                            let contact_id = "";
-                            let contact_name = "";
-                            let contact_photo = "";
-                            let contact_resourceName = "";
-                            let contact_etag = "";
+                            var contact_id = "";
+                            var contact_name = "";
+                            var contact_photo = "";
+                            var contact_resourceName = "";
+                            var contact_etag = "";
                         
                             
-                            for (let attributes in json1[item][connection])
+                            for (var attributes in json1[item][connection])
                             {
                                 //Logger.log("== ATTR: " + attributes + " = " + json1[item][connection][attributes]);
             
                                 // get resourceName
                                 if (attributes == "resourceName")
                                 {
-                                    let contact_resourceName = json1[item][connection][attributes];
+                                    var contact_resourceName = json1[item][connection][attributes];
                                 }
                                 
                                 // get etag
                                 if (attributes == "etag")
                                 {
-                                    let contact_etag = json1[item][connection][attributes];
+                                    var contact_etag = json1[item][connection][attributes];
                                 }
                                     
                                 // get the contact ID
@@ -613,7 +381,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                                             
                                             if (name_detail == "displayName")
                                             {
-                                                let contact_name = json1[item][connection][attributes][names][name_detail];
+                                                var contact_name = json1[item][connection][attributes][names][name_detail];
                                             }
                                             
                                             if (name_detail == "metadata")
@@ -630,7 +398,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                                                             
                                                             if (source == "id")
                                                             {                                                
-                                                                let contact_id = json1[item][connection][attributes][names][name_detail][metadata][source]
+                                                                var contact_id = json1[item][connection][attributes][names][name_detail][metadata][source]
                                                             }
                                                             
                                                         }
@@ -664,7 +432,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                                                 
                                                 if (photo_detail == "url")
                                                 {
-                                                    let contact_photo = json1[item][connection][attributes][photos][photo_detail];
+                                                    var contact_photo = json1[item][connection][attributes][photos][photo_detail];
                                                 }
                                             
                                             }
@@ -714,13 +482,13 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
             
 
                     
-                // console.log("-- aPeopleContactPhotos - PHOTOS FROM CONTACTS --");
-                // console.log("aPeopleContactPhotos.length: " + aPeopleContactPhotos.length.toString()); 
-                // for (let countContact = 0 ; countContact < aPeopleContactPhotos.length ; countContact++)
-                // {
-                //     console.log("aPeopleContactPhotos[" + countContact.toString() + "] = " + aPeopleContactPhotos[countContact]);    
-                // }
-                // console.log("-- END aPeopleContactPhotos - PHOTOS FROM CONTACTS --");            
+                console.log("-- aPeopleContactPhotos - PHOTOS FROM CONTACTS --");
+                console.log("aPeopleContactPhotos.length: " + aPeopleContactPhotos.length.toString()); 
+                for (let countContact = 0 ; countContact < aPeopleContactPhotos.length ; countContact++)
+                {
+                    console.log("aPeopleContactPhotos[" + countContact.toString() + "] = " + aPeopleContactPhotos[countContact]);    
+                }
+                console.log("-- END aPeopleContactPhotos - PHOTOS FROM CONTACTS --");            
 
 
                 // this array will be used below, where finishing the results
@@ -841,9 +609,9 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                         {      
                             let person = JSON.parse(aPeopleContactPhotos[x]);
 
-                            Logger.log("aPeopleContactPhotos[" + x.toString() + "] = " + aPeopleContactPhotos[x]);
-                            Logger.log("person.id = " + person.id);
-                            Logger.log("outID = " + outID);
+                            //Logger.log("aPeopleContactPhotos[" + x.toString() + "] = " + aPeopleContactPhotos[x]);
+                            //Logger.log("person.id = " + person.id);
+                            //Logger.log("outID = " + outID);
 
                             if (person.id == outID)
                             {
@@ -946,7 +714,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
             
             do 
             {                
-                let response = AdminDirectory.Users.list(options);
+                var response = AdminDirectory.Users.list(options);
 
                 //console.log("response = " + response.users);
                 
@@ -1246,11 +1014,15 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
             // console.log("console = aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
             // Logger.log("Logger = aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
 
-            let temp_contact2 = JSON.parse(aRetResults_final[countContact]);
+            if (typeof(aRetResults_final[countContact]) !== "undefined")
+            {
+                let temp_contact2 = JSON.parse(aRetResults_final[countContact]);
 
-            temp_contact2.index = countContact.toString();
-            
-            aRetResults_return.push(JSON.stringify(temp_contact2));
+                temp_contact2.index = countContact.toString();
+                
+                aRetResults_return.push(JSON.stringify(temp_contact2));
+            }
+
         }
 
 
@@ -1277,6 +1049,242 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
 
     return retFunc;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * addBtnToBtnSet: add an button to be used in a buttonset
+ * @param {string} id - The ID defined for the button
+ * @param {string} Text - the text that will appear in the button
+ * @param {string} onClickFunction - The function that will be called when the button is clicked
+ * @param {string} isFilled - optional - true or false: defines the visual style of the button
+ * @returns {button} returns the created button to be added to a buttonSet
+*/
+function addBtnToBtnSet(id, Text, onClickFunction, isFilled) 
+{
+    logStack("addBtnToBtnSet");
+
+    let local_function = onClickFunction.toString();
+
+    let TypeButton = CardService.TextButtonStyle.TEXT;
+
+    // Button
+    let action = CardService.newAction()
+        .setFunctionName(local_function)
+        .setLoadIndicator(CardService.LoadIndicator.SPINNER)
+        .setParameters({'id': id.toString()});
+    
+    if (isFilled == true)
+    {
+        TypeButton = CardService.TextButtonStyle.FILLED
+    }   
+     
+    
+    let button = CardService.newTextButton()
+        .setText(Text)
+        .setTextButtonStyle(TypeButton)
+        .setBackgroundColor("#315c7a")
+        .setOnClickAction(action);
+    
+    return button;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+function getCurrentMessage(event)
+{
+    logStack("getCurrentMessage");
+    let accessToken = event.messageMetadata.accessToken;
+    let messageId = event.messageMetadata.messageId;
+
+    GmailApp.setCurrentMessageAccessToken(accessToken);
+
+    return GmailApp.getMessageById(messageId);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//Get a string in ISO date format, from a given date. returns string: YYYY-MM-DD HH:MM:SS
+function isoDate(theDate)
+{
+    let ret = "";
+
+    if (theDate != "" && theDate != null)
+    {
+        let ret = theDate.toISOString();
+
+        ret = trim(ret);
+        ret = ret.replace("T", " ");
+        ret = left(ret, 19);
+    }
+ 
+    return ret; 
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//Get the left-most N caracters from a string
+function left(theString, Size)
+{
+    let ret = "";
+
+    if (theString != "" && theString != null)
+    {
+        ret = theString.substring(0, Size);
+    }
+ 
+    return ret; 
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//Get the right-most N caracters from a string
+function right(theString, Size)
+{
+    let ret = "";
+
+    if (theString != "" && theString != null)
+    {
+        ret = theString.substring(theString.length - Size, theString.length);
+    }
+ 
+    return ret; 
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// trim the string
+function trim(theString)
+{  
+    let ret = "";
+
+    if (theString != "" && theString != null)
+    {
+        ret = theString.replace(/^\s+|\s+$/g,'');
+    }
+ 
+    return ret; 
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// clean the string removing non printable chars and others that might be handfull. Also trims the string
+function clean(theString)
+{  
+    let ret = "";
+
+    if (typeof(theString) === "undefined")
+    {
+        theString = "";
+    }
+
+    if (theString != "" && theString != null)
+    {
+        ret = theString.toString();
+        ret = trim(ret);
+        ret = replaceALL(String.fromCharCode(160), "");
+        ret = replaceALL(String.fromCharCode(150), "");
+        ret = replaceALL("'", "´");
+    }
+ 
+    return ret; 
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Shows a popup msg in the user screen. Usage: return showPopMsg("this is a test");
+// usage: return showPopMsg("texto to show");
+function showPopMsg(Message) 
+{
+    logStack("showPopMsg");
+    return CardService.newActionResponseBuilder()
+    .setNotification(CardService.newNotification()
+        .setText(Message))
+    .build();
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function logStack(theFunc)
+{
+    Logger.log("STACK>> " + theFunc + "()");
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+function Log(Message)
+{
+    Logger.log("LOG>> " + Message);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function render_Alert(Message, funcToReturn)
+{
+    logStack("render_Alert");
+
+    
+    let buttonSet_Back = CardService.newButtonSet();
+    buttonSet_Back.addButton(addBtnToBtnSet(1, "Back", funcToReturn.toString(), true));    
+
+    // Render the page, adding all widgets
+    let card = CardService.newCardBuilder()
+        //.setHeader(cardHeader)
+        .addSection(CardService.newCardSection()
+            .addWidget(CardService.newTextParagraph().setText(Message))
+            .addWidget(buttonSet_Back)
+        )
+
+        .build();
+
+    let nav = CardService.newNavigation().pushCard(card);
+        return CardService.newActionResponseBuilder()
+            .setNavigation(nav)
+            .build();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// show some text in the screen, for debug
+// usage: return writeDebugTxtInScreen("texto to show");
+function writeDebugTxtInScreen(theText)
+{
+    logStack("writeDebugTxtInScreen");
+
+    let card_section1 = CardService.newCardSection()
+        .addWidget(CardService.newTextParagraph().setText(theText));
+ 
+    let card = CardService.newCardBuilder()
+        .addSection(card_section1)
+        .build();
+
+    return [card];
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// In javascript the replace function only replaces the first occorence. So, this funcion replaces ALL ocorrences.
+// This IS CASE SENSITIVE
+function replaceALL(stringSearched, findString, replaceWith)
+{
+    return stringSearched.split(findString).join(replaceWith);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

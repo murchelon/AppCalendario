@@ -195,7 +195,7 @@ function onClick_btnDoSearch(event)
     //let retFunc = getPeople("marcelo", "ALL", "ALL");
     //let retFunc = getPeople("marcelo", "", "", "", false);
 
-    return getPeople(txtToSearch, "ALL", "CONTACTS", "NAME", true);
+    let retFunc = getPeople(txtToSearch, "ALL", "ALL", "NAME", true);
 
     
     if (left(retFunc, 2) == "-1")
