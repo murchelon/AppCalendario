@@ -583,7 +583,8 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                                       
                     var outThumbnailPhotoUrl = "https://ssl.gstatic.com/s2/profiles/images/silhouette200.png";
                     
-                    var outID = replaceALL(contacts[c].getId(), "http://www.google.com/m8/feeds/contacts/" + _email + "/base/", "");
+                    //var outID = replaceALL(contacts[c].getId(), "http://www.google.com/m8/feeds/contacts/" + _email + "/base/", "");
+                    var outID = contacts[c].getId();
 
                     var retJSON = "";
                     retJSON += "{";
