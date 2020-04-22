@@ -9,7 +9,7 @@ function render_HomePage(event)
     logStack("render_HomePage");
 
     // Render the page, adding all widgets
-    let cardHeader = CardService.newCardHeader()
+    var cardHeader = CardService.newCardHeader()
         .setTitle("HOMEPAGE")
         //.setSubtitle("3")
         .setImageStyle(CardService.ImageStyle.CIRCLE)
@@ -17,13 +17,13 @@ function render_HomePage(event)
 
 
 
-    let buttonSet_HomePage = CardService.newButtonSet();
+    var buttonSet_HomePage = CardService.newButtonSet();
     buttonSet_HomePage.addButton(addBtnToBtnSet(1, "Manage Meetings", "onClick_btnManageMeetings"));
     buttonSet_HomePage.addButton(addBtnToBtnSet(2, "Manage Teams", "onClick_btnManageTeams"));
 
 
     // Render the page, adding all widgets
-    let card = CardService.newCardBuilder()
+    var card = CardService.newCardBuilder()
         .setHeader(cardHeader)
         .addSection(CardService.newCardSection()
 

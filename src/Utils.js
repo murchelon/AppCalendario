@@ -6,69 +6,62 @@ function TesteUnitCall()
 
     //getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
 
-    // let retFunc = getPeople("", "ALL", "ALL", "NAME", true);
-    // console.log("retFunc: " + retFunc);
+    var retFunc = getPeople("", "ALL", "ALL", "NAME", true);
+    Log("retFunc: " + retFunc);
 
-    let retFunc = isLoggerUserFromDirectory();
-    console.log("retFunc: " + retFunc);
+    // var retFunc = isLoggerUserFromDirectory();
+    // Log("retFunc: " + retFunc);
 
 }
 
-function isLoggerUserFromDirectory()
+function isLoggedUserFromDirectory()
 { 
-    logStack("isLoggerUserFromDirectory");
+    logStack("isLoggedUserFromDirectory");
 
-    let retFunc = "-1|Initial value";
+    var retFunc = "-1|Initial value";
 
-    let loggedUserEmail = Session.getEffectiveUser().getEmail();
+    var foundUser = false;
+
+    var loggedUserEmail = Session.getEffectiveUser().getEmail();
     
     if (clean(loggedUserEmail) == "")
     {
-        retFunc = "-1|The e-mail from the logged user was not found";
+        retFunc = "-1|The e-mail from the logged user was not found in getEffectiveUser().getEmail()";
         return retFunc;
     }
 
-    loggedUserEmail = "gabriel@quiteoften.co";
-    let options = loggedUserEmail;
 
-    // try
-    // {
-        
-        // let options = {
-        //     maxResults: 300,
-        //     customer: 'my_customer',
-        //     projection: 'basic',
-        //     viewType: 'domain_public',                
-        //     sortOrder: 'ASCENDING',
-        // };
-      
-        // options.orderBy = "email";
+    var options = {
+        maxResults: 10,
+        customer: 'my_customer',
+        projection: 'basic',
+        viewType: 'domain_public',                
+        sortOrder: 'ASCENDING',
+        orderBy: 'email',
+    };
 
-        // options.query = "email:'" + loggedUserEmail + "'"
+    options.query = "email:'" + loggedUserEmail + "'"
+    
 
-        
-        
-        //Logger.log("options = " + JSON.stringify(options));
+    //Log("options = " + JSON.stringify(options));
 
-        
+    try
+    {    
         do 
         {                
-            var response = AdminDirectory.Users.get(options);
-
-            //console.log("response = " + response.users);
+            var response = AdminDirectory.Users.list(options);
+            
+            //Log("response = " + response.users);
             
             if (typeof(response.users) !== "undefined")
             {
                 response.users.forEach(function(user) {
 
-                    console.log("user.id  = " + user.id);
-                    console.log("user.name.fullName   = " + user.name.fullName );
-                    console.log("user.primaryEmail  = " + user.primaryEmail);
-                     
-                    return "loggedUserEmail = " + loggedUserEmail + " -- achou: user.primaryEmail  = " + user.primaryEmail;
-
-                    retFunc = "1"
-
+                    if (clean(user.primaryEmail) == clean(loggedUserEmail))
+                    {
+                        foundUser = true;
+                    }
+                    
                 });
             }
 
@@ -80,20 +73,25 @@ function isLoggerUserFromDirectory()
 
         } while (response.nextPageToken);
 
-    return "nao achou loggedUserEmail = " + loggedUserEmail;
-
-    // }
-    // catch(error)
-    // {
-    //     retFunc = "-1|" + error.stack;
-    //     //retFunc = "0";
-    //     return retFunc;
-    // }
+    }
+    catch(error)
+    {
+        // user doesnt have access to directory services
+        foundUser = false;
+    }
+            
 
 
-    return retFunc;
+    if (foundUser == true)
+    {
+        retFunc = "1";
+    }
+    else
+    {
+        retFunc = "0";
+    }
     
-
+    return retFunc;    
 }
 
 
@@ -109,7 +107,7 @@ function isLoggerUserFromDirectory()
  * @param {string} unifyOrderBy - (optional) (default: true): true|false . Mix the ordering with CONTACTS and DIRECTORY. if true, the results will be ordered mixing contacts and directory results. If false, will show first the contacs then the directory results.
  * @returns {string} - returns a string indicating if the function succeded or not. If an error ocurred, the ErrodCode and Description are returned. Else, the total os results and a JSON with the results.
 */
-function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAME", unifyOrderBy=true)
+function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
 {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -122,17 +120,17 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 //
 // Calling examples: ("" can default to "ALL" or "NAME" or true, depending on witch parameter we are looking)
 //
-// let retFunc = getPeople("Marcelo", "NAME", "ALL", "NAME", true);
-// console.log(JSON.stringfy(retFunc));
+// var retFunc = getPeople("Marcelo", "NAME", "ALL", "NAME", true);
+// Log(JSON.stringfy(retFunc));
 //
-// let retFunc = getPeople("Joao");
-// console.log(JSON.stringfy(retFunc));
+// var retFunc = getPeople("Joao");
+// Log(JSON.stringfy(retFunc));
 //
-// let retFunc = getPeople("", "", "CONTACTS", "NAME"); // get all contacts 
-// console.log(JSON.stringfy(retFunc));
+// var retFunc = getPeople("", "", "CONTACTS", "NAME"); // get all contacts 
+// Log(JSON.stringfy(retFunc));
 //
-// let retFunc = getPeople("Andre", "ALL", "ALL", "NAME", false);
-// console.log(JSON.stringfy(retFunc));
+// var retFunc = getPeople("Andre", "ALL", "ALL", "NAME", false);
+// Log(JSON.stringfy(retFunc));
 //
 //
 // ------------------------------------------
@@ -189,24 +187,27 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
     logStack("getPeople");
 
-    let retFunc = "";
     
-    let lookInContacts = false;
-    let lookInDirectory = false;
-
-    let lookInEmail = false;
-    let lookInName = false;
-
-    let aRetResults_temp = [];
-    let aRetResults_NoDuplicated = [];
-    let aRetResults_final = [];
-    let countResult = 0;    
     
-    let aTemp_Name = [];
+    var retFunc = "";
+    
+    var lookInContacts = false;
+    var lookInDirectory = false;
 
-    let param_SearchProfilePhotoInPeopleAPI = true;     // param that can be set to true or false, to look for the profile picture for contacts
+    var lookInEmail = false;
+    var lookInName = false;
 
+    var aRetResults_temp = [];
+    var aRetResults_NoDuplicated = [];
+    var aRetResults_final = [];
+    var countResult = 0;    
+    
+    var aTemp_Name = [];
 
+    var param_SearchProfilePhotoInPeopleAPI = true;     // param that can be set to true or false, to look for the profile picture for contacts
+
+    // incrementRunTimeNumber();    
+    // Log("getRunTimeNumber = " + getRunTimeNumber());
 
     // define default values, if not supplied
     if ((typeof fieldToSearch === "undefined") || (fieldToSearch == "")) { fieldToSearch = "ALL"; }
@@ -214,52 +215,20 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
     if ((typeof orderBy === "undefined") || (orderBy == "")) { orderBy = "NAME"; }
     if ((typeof unifyOrderBy === "undefined") || (unifyOrderBy == "")) { unifyOrderBy = true; }
 
-    // console.log("pqp2 = " + coverage);
-
-    // if ((coverage == "ALL") || (coverage == "CONTACTS"))
-    // {
-    //     lookInContacts = true;
-    // }
-
-    // if ((coverage == "ALL") || (coverage == "DIRECTORY"))
-    // {
-    //     lookInDirectory = true;
-    // }
-
-
-    // if ((coverage == "ALL") || (coverage == "CONTACTS"))
-    // {
-    //     lookInEmail = true;
-    // }
-
-    // if ((coverage == "ALL") || (coverage == "DIRECTORY"))
-    // {
-    //     lookInName = true;
-    // }
-
-
-    // console.log("lookInEmail = " + lookInEmail);
-    // console.log("lookInName = " + lookInName);
-    // console.log("lookInContacts = " + lookInContacts);
-    // console.log("lookInDirectory = " + lookInDirectory);    
-
-    // return;
 
     // // debug:
-    console.log("fieldToSearch = " + fieldToSearch);
-    console.log("coverage = " + coverage);
-    console.log("orderBy = " + orderBy);
-    console.log("unifyOrderBy = " + unifyOrderBy);
+    // Log("fieldToSearch = " + fieldToSearch);
+    // Log("coverage = " + coverage);
+    // Log("orderBy = " + orderBy);
+    // Log("unifyOrderBy = " + unifyOrderBy);
     //return;
 
     // clean input to remote unwanted chars
-    searchText = clean(searchText);
-    searchText = replaceALL(searchText, "*", "");
+    searchText = replaceALL(clean(searchText), "*", "");
     
     fieldToSearch = clean(fieldToSearch);
     coverage = clean(coverage);
 
-    Log("coverage super = " + coverage)
 
     // define some internal parameters
     if ((fieldToSearch == "EMAIL") || (fieldToSearch == "ALL")) {lookInEmail = true;}
@@ -269,23 +238,29 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
     if ((coverage == "DIRECTORY") || (coverage == "ALL")) {lookInDirectory = true;}
   
 
-    Log("puta que paril");
+    // Log("lookInEmail = " + lookInEmail);
+    // Log("lookInName = " + lookInName);
+    // Log("lookInContacts = " + lookInContacts);
+    // Log("lookInDirectory = " + lookInDirectory);
+    // return;
 
-    console.log("lookInEmail = " + lookInEmail);
-    console.log("lookInName = " + lookInName);
-    console.log("lookInContacts = " + lookInContacts);
-    console.log("lookInDirectory = " + lookInDirectory);
-    return;
+    var isLoggedUserFromDirectory = loadUserProperty("isLoggedUserFromDirectory");
 
-    // //debug:
-    // retFunc = "";
-    // retFunc += "fieldToSearch: " + fieldToSearch + " , lookInEmail = " + lookInEmail + ", lookInName = " + lookInName;
-    // retFunc += " | ";
-    // retFunc += "coverage: " + coverage + " , lookInContacts = " + lookInContacts + ", lookInDirectory = " + lookInDirectory; 
-    
-    // Log(retFunc);
+    if (isLoggedUserFromDirectory == "")
+    {
+        isLoggedUserFromDirectory = "0";
+    }
 
+    if ((isLoggedUserFromDirectory == "0") && (lookInContacts == false) && (lookInDirectory == true))
+    {
+        retFunc = "-1|Incorrect param: The logged user is not from a Directory, so, you must search in the contacts only";
+        return retFunc;
+    }
 
+    if (isLoggedUserFromDirectory == "0")
+    {
+        lookInDirectory = false;
+    }
 
     // returns with error if the params are incorrect
     if ((lookInContacts == false) && (lookInDirectory == false))
@@ -320,19 +295,19 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
                 // code just to get the contacts profile photos, witch reside in the People API:
                 var aPeopleContactPhotos = [];
-                let contaPeople = 0;
+                var contaPeople = 0;
 
                 // create the array with all personal contacts profile photos
-                let people = People.People.Connections.list("people/me", {
-                    personFields: 'names,emailAddresses,metadata'
+                var people = People.People.Connections.list("people/me", {
+                    personFields: 'names,emailAddresses,metadata,photos'
                 });
                             
-                let json1 = JSON.parse(people);
+                var json1 = JSON.parse(people);
                     
-                //Logger.log("============================");
+                //Log("============================");
             
                 
-                for (let item in json1)
+                for (var item in json1)
                 {
                     if (item == "totalItems")
                     {
@@ -341,11 +316,11 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                     
                     if (item == "connections")
                     {        
-                        //Logger.log("ITEM: " + item + " = " + json1[item]);
+                        //Log("ITEM: " + item + " = " + json1[item]);
                         
-                        for (let connection in json1[item])
+                        for (var connection in json1[item])
                         {
-                            //Logger.log("== CONNECTION: " + connection + " = " + json1[item][connection]);
+                            //Log("== CONNECTION: " + connection + " = " + json1[item][connection]);
                             
                             var contact_id = "";
                             var contact_name = "";
@@ -356,7 +331,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                             
                             for (var attributes in json1[item][connection])
                             {
-                                //Logger.log("== ATTR: " + attributes + " = " + json1[item][connection][attributes]);
+                                //Log("== ATTR: " + attributes + " = " + json1[item][connection][attributes]);
             
                                 // get resourceName
                                 if (attributes == "resourceName")
@@ -371,43 +346,69 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                                 }
                                     
                                 // get the contact ID
+                                if (attributes == "metadata")
+                                {
+                                    for (var sources in json1[item][connection][attributes])
+                                    {
+                                        for (var souce_detail in json1[item][connection][attributes][sources])
+                                        {
+                                            //Log("== SOURCE_DETAIL: " + souce_detail + " = " + json1[item][connection][attributes][sources][souce_detail]);
+                                            
+                                            if (souce_detail == "0")
+                                            {
+                                                //Log("== SOURCE_DETAIL: " + souce_detail + " = " + json1[item][connection][attributes][sources][souce_detail]);
+                                                
+                                                for (var propriedade in json1[item][connection][attributes][sources][souce_detail])
+                                                {
+                                                    if (propriedade == "id")
+                                                    {
+                                                        var contact_id = json1[item][connection][attributes][sources][souce_detail][propriedade];
+                                                    }
+                                                }                                            
+                                            }                                            
+                                        }                                       
+                                    }
+                                }
+
+
+                                // get the name
                                 if (attributes == "names")
                                 {
-                                    for (let names in json1[item][connection][attributes])
+                                    for (var names in json1[item][connection][attributes])
                                     {
-                                        for (let name_detail in json1[item][connection][attributes][names])
+                                        for (var name_detail in json1[item][connection][attributes][names])
                                         {
-                                            //Logger.log("== NAME_DETAIL: " + name_detail + " = " + json1[item][connection][attributes][names][name_detail]);
+                                            //Log("== NAME_DETAIL: " + name_detail + " = " + json1[item][connection][attributes][names][name_detail]);
                                             
                                             if (name_detail == "displayName")
                                             {
                                                 var contact_name = json1[item][connection][attributes][names][name_detail];
                                             }
                                             
-                                            if (name_detail == "metadata")
-                                            {
-                                                for (let metadata in json1[item][connection][attributes][names][name_detail])
-                                                {                                    
-                                                    //Logger.log("== NAME_DETAIL_METADATA: " + metadata + " = " + json1[item][connection][attributes][names][name_detail][metadata]);
+                                            // if (name_detail == "metadata")
+                                            // {
+                                            //     for (var metadata in json1[item][connection][attributes][names][name_detail])
+                                            //     {                                    
+                                            //         //Log("== NAME_DETAIL_METADATA: " + metadata + " = " + json1[item][connection][attributes][names][name_detail][metadata]);
                                                     
-                                                    if (metadata == "source")
-                                                    {
-                                                        for (let source in json1[item][connection][attributes][names][name_detail][metadata])
-                                                        {                                            
-                                                            //Logger.log("== NAME_DETAIL_METADATA_SOURCE: " + source + " = " + json1[item][connection][attributes][names][name_detail][metadata][source]);
+                                            //         if (metadata == "source")
+                                            //         {
+                                            //             for (var source in json1[item][connection][attributes][names][name_detail][metadata])
+                                            //             {                                            
+                                            //                 //Log("== NAME_DETAIL_METADATA_SOURCE: " + source + " = " + json1[item][connection][attributes][names][name_detail][metadata][source]);
                                                             
-                                                            if (source == "id")
-                                                            {                                                
-                                                                var contact_id = json1[item][connection][attributes][names][name_detail][metadata][source]
-                                                            }
+                                            //                 if (source == "id")
+                                            //                 {                                                
+                                            //                     var contact_id = json1[item][connection][attributes][names][name_detail][metadata][source]
+                                            //                 }
                                                             
-                                                        }
+                                            //             }
             
-                                                    }
+                                            //         }
                                                 
-                                                }                                
+                                            //     }                                
                                             
-                                            }
+                                            // }
             
                                         }
                                     
@@ -418,17 +419,17 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                                 // get the photos
                                 if (attributes == "photos")
                                 {
-                                    for (let photos in json1[item][connection][attributes])
+                                    for (var photos in json1[item][connection][attributes])
                                     {
-                                        //Logger.log("== PHOTOS: " + photos + " = " + json1[item][connection][attributes][photos]);
+                                        //Log("== PHOTOS: " + photos + " = " + json1[item][connection][attributes][photos]);
                                         
-                                        for (let photo_detail in json1[item][connection][attributes][photos])
+                                        for (var photo_detail in json1[item][connection][attributes][photos])
                                         {
-                                            //Logger.log("== PHO_DETAIL: " + photo_detail + " = " + json1[item][connection][attributes][photos][photo_detail]);
+                                            //Log("== PHO_DETAIL: " + photo_detail + " = " + json1[item][connection][attributes][photos][photo_detail]);
                                             
                                             if (photos == "0")
                                             {
-                                                //Logger.log("== PHO_DETAIL: " + photo_detail + " = " + json1[item][connection][attributes][photos][photo_detail]);
+                                                //Log("== PHO_DETAIL: " + photo_detail + " = " + json1[item][connection][attributes][photos][photo_detail]);
                                                 
                                                 if (photo_detail == "url")
                                                 {
@@ -445,15 +446,15 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                                 
                             }
                             
-                            // Logger.log("FINAL: contact_id = " + contact_id);
-                            // Logger.log("FINAL: contact_name = " + contact_name);
-                            // Logger.log("FINAL: contact_photo = " + contact_photo);
-                            // Logger.log("FINAL: contact_resourceName = " + contact_resourceName);
-                            // Logger.log("FINAL: contact_etag = " + contact_etag);
-                            // Logger.log("============================");   
+                            // Log("FINAL: contact_id = " + contact_id);
+                            // Log("FINAL: contact_name = " + contact_name);
+                            // Log("FINAL: contact_photo = " + contact_photo);
+                            // Log("FINAL: contact_resourceName = " + contact_resourceName);
+                            // Log("FINAL: contact_etag = " + contact_etag);
+                            // Log("============================");   
                             
 
-                            let retJSON = "";
+                            var retJSON = "";
                             retJSON += "{";
                             retJSON += "    'index': " + contaPeople.toString() + ",";
                             retJSON += "    'source': 'PEOPLE_API',";
@@ -478,17 +479,25 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                     }
                 }
                 
-                // Logger.log("FINAL: totalItensFound = " + totalItensFound);
-            
-
-                    
-                console.log("-- aPeopleContactPhotos - PHOTOS FROM CONTACTS --");
-                console.log("aPeopleContactPhotos.length: " + aPeopleContactPhotos.length.toString()); 
-                for (let countContact = 0 ; countContact < aPeopleContactPhotos.length ; countContact++)
+                // Log("FINAL: totalItensFound = " + totalItensFound);
+   
+                var objLogSheet = InitLogSheet();
+                LogSheet("-- aPeopleContactPhotos - PEOPLE API --", objLogSheet);
+                LogSheet("aPeopleContactPhotos.length: " + aPeopleContactPhotos.length.toString(), objLogSheet); 
+                for (var countContact = 0 ; countContact < aPeopleContactPhotos.length ; countContact++)
                 {
-                    console.log("aPeopleContactPhotos[" + countContact.toString() + "] = " + aPeopleContactPhotos[countContact]);    
+                    LogSheet("aPeopleContactPhotos[" + countContact.toString() + "] = " + aPeopleContactPhotos[countContact], objLogSheet);    
                 }
-                console.log("-- END aPeopleContactPhotos - PHOTOS FROM CONTACTS --");            
+                LogSheet("-- END aPeopleContactPhotos - PEOPLE API --", objLogSheet);            
+
+
+                // Log("-- aPeopleContactPhotos - PEOPLE API --");
+                // Log("aPeopleContactPhotos.length: " + aPeopleContactPhotos.length.toString()); 
+                // for (var countContact = 0 ; countContact < aPeopleContactPhotos.length ; countContact++)
+                // {
+                //     Log("aPeopleContactPhotos[" + countContact.toString() + "] = " + aPeopleContactPhotos[countContact]);    
+                // }
+                // Log("-- END aPeopleContactPhotos - PEOPLE API --");            
 
 
                 // this array will be used below, where finishing the results
@@ -509,9 +518,9 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         try
         {
             // if searching for name and email, it takes 2 rounds of search. DEfault is 1 round only
-            let rounds = 1;
+            var rounds = 1;
 
-            let contacts;
+            var contacts;
 
             // if search string is empty, then, we need only 1 round becase we will get all contacts using the method .getContacts()
             if (searchText != "")
@@ -525,7 +534,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
 
 
-            for (let countRound = 1 ; countRound <= rounds ; countRound++)
+            for (var countRound = 1 ; countRound <= rounds ; countRound++)
             {
 
                 // if search string is empty, so bring ALL contacts
@@ -563,20 +572,20 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                 
 
 
-                for (let c in contacts)
+                for (var c in contacts)
                 {
    
-                    //let _temp = contacts[c].getId().split("/");
+                    //var _temp = contacts[c].getId().split("/");
 
                     //return writeDebugTxtInScreen("gGlobalVars.Session_UserEmail = " + gGlobalVars.Session_UserEmail);
 
-                    let _email = replaceALL(Session.getEffectiveUser().getEmail(), "@", "%40");
+                    var _email = replaceALL(Session.getEffectiveUser().getEmail(), "@", "%40");
                                       
-                    let outThumbnailPhotoUrl = "https://ssl.gstatic.com/s2/profiles/images/silhouette200.png";
+                    var outThumbnailPhotoUrl = "https://ssl.gstatic.com/s2/profiles/images/silhouette200.png";
                     
-                    let outID = replaceALL(contacts[c].getId(), "http://www.google.com/m8/feeds/contacts/" + _email + "/base/", "");
+                    var outID = replaceALL(contacts[c].getId(), "http://www.google.com/m8/feeds/contacts/" + _email + "/base/", "");
 
-                    let retJSON = "";
+                    var retJSON = "";
                     retJSON += "{";
                     retJSON += "    'index': " + countResult.toString() + ",";
                     retJSON += "    'id': '" + outID + "',";
@@ -605,13 +614,13 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                     if (param_SearchProfilePhotoInPeopleAPI == true)
                     {
                         // search the array with contact photos, looking for the register with the same id     
-                        for (let x = 0 ; x < aPeopleContactPhotos.length ; x++)
+                        for (var x = 0 ; x < aPeopleContactPhotos.length ; x++)
                         {      
-                            let person = JSON.parse(aPeopleContactPhotos[x]);
+                            var person = JSON.parse(aPeopleContactPhotos[x]);
 
-                            //Logger.log("aPeopleContactPhotos[" + x.toString() + "] = " + aPeopleContactPhotos[x]);
-                            //Logger.log("person.id = " + person.id);
-                            //Logger.log("outID = " + outID);
+                            //Log("aPeopleContactPhotos[" + x.toString() + "] = " + aPeopleContactPhotos[x]);
+                            //Log("person.id = " + person.id);
+                            //Log("outID = " + outID);
 
                             if (person.id == outID)
                             {
@@ -652,15 +661,23 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         }
 
 
-
-        
-        // console.log("-- aRetResults_temp - CONTATOS --");
-        // console.log("aRetResults_temp.length: " + aRetResults_temp.length.toString()); 
-        // for (let countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
+        // var objLogSheet = InitLogSheet();
+        // LogSheet("-- aRetResults_temp - CONTATOS --", objLogSheet);
+        // LogSheet("aRetResults_temp.length: " + aRetResults_temp.length.toString(), objLogSheet); 
+        // for (var countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
         // {
-        //     console.log("aRetResults_temp[" + countContact.toString() + "] = " + aRetResults_temp[countContact]);    
+        //     LogSheet("aRetResults_temp[" + countContact.toString() + "] = " + aRetResults_temp[countContact], objLogSheet);    
         // }
-        // console.log("-- END aRetResults_temp - CONTATOS --");
+        // LogSheet("-- END aRetResults_temp - CONTATOS --"), objLogSheet;
+
+   
+        // Log("-- aRetResults_temp - CONTATOS --");
+        // Log("aRetResults_temp.length: " + aRetResults_temp.length.toString()); 
+        // for (var countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
+        // {
+        //     Log("aRetResults_temp[" + countContact.toString() + "] = " + aRetResults_temp[countContact]);    
+        // }
+        // Log("-- END aRetResults_temp - CONTATOS --");
 
 
 
@@ -677,7 +694,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         try
         {
             
-            let options = {
+            var options = {
                 maxResults: 300,
                 customer: 'my_customer',
                 projection: 'basic',
@@ -709,20 +726,21 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                 options.query = "email:'" + searchText + "*'"
             }
             
-            //Logger.log("options = " + JSON.stringify(options));
+ 
+            //Log("options = " + JSON.stringify(options));
 
             
             do 
             {                
                 var response = AdminDirectory.Users.list(options);
-
-                //console.log("response = " + response.users);
+                
+                //Log("response = " + response.users);
                 
                 if (typeof(response.users) !== "undefined")
                 {
                     response.users.forEach(function(user) {
 
-                        let retJSON = "";
+                        var retJSON = "";
                         retJSON += "{";
                         retJSON += "    'index': " + countResult.toString() + ",";
                         retJSON += "    'id': '" + user.id + "',";
@@ -776,13 +794,13 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
             return retFunc;
         }
 
-        // console.log("-- aRetResults_temp - DIRECTORY --");
-        // console.log("aRetResults_temp.length: " + aRetResults_temp.length.toString()); 
-        // for (let countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
+        // Log("-- aRetResults_temp - DIRECTORY --");
+        // Log("aRetResults_temp.length: " + aRetResults_temp.length.toString()); 
+        // for (var countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
         // {
-        //     console.log("aRetResults_temp[" + countContact.toString() + "] = " + aRetResults_temp[countContact]);    
+        //     Log("aRetResults_temp[" + countContact.toString() + "] = " + aRetResults_temp[countContact]);    
         // }
-        // console.log("-- END aRetResults_temp - DIRECTORY --");
+        // Log("-- END aRetResults_temp - DIRECTORY --");
 
     }
     
@@ -802,22 +820,22 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         // clean results removing duplicate, only if searched for email AND name
         if ((lookInEmail == true) && (lookInName == true))
         {
-            for (let countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
+            for (var countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
             {
-                //console.log("aRetResults_temp[" + countContact.toString() + "] = " + aRetResults_temp[countContact]);  
+                //Log("aRetResults_temp[" + countContact.toString() + "] = " + aRetResults_temp[countContact]);  
 
-                let temp_contact = JSON.parse(aRetResults_temp[countContact]);
+                var temp_contact = JSON.parse(aRetResults_temp[countContact]);
 
-                //console.log("aRetResults_temp[" + countContact.toString() + "].id = " + temp_contact.id);    
+                //Log("aRetResults_temp[" + countContact.toString() + "].id = " + temp_contact.id);    
 
-                let allowInsert = true;
+                var allowInsert = true;
 
 
-                for (let x = 0 ; x < aRetResults_NoDuplicated.length ; x++)
+                for (var x = 0 ; x < aRetResults_NoDuplicated.length ; x++)
                 {
                     if (trim(aRetResults_NoDuplicated[x]) != "")
                     {
-                        let temp_contact2 = JSON.parse(aRetResults_NoDuplicated[x]);
+                        var temp_contact2 = JSON.parse(aRetResults_NoDuplicated[x]);
 
                         if (temp_contact.id == temp_contact2.id)
                         {
@@ -834,13 +852,13 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
             }
 
-            // console.log("-- aRetResults_NoDuplicated - NO_DUPLICATED --");
-            // console.log("aRetResults_NoDuplicated.length: " + aRetResults_NoDuplicated.length.toString()); 
-            // for (let countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
+            // Log("-- aRetResults_NoDuplicated - NO_DUPLICATED --");
+            // Log("aRetResults_NoDuplicated.length: " + aRetResults_NoDuplicated.length.toString()); 
+            // for (var countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
             // {
-            //     console.log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
+            //     Log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
             // }
-            // console.log("-- END aRetResults_NoDuplicated - NO_DUPLICATED --");
+            // Log("-- END aRetResults_NoDuplicated - NO_DUPLICATED --");
             
             
 
@@ -848,9 +866,9 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         else
         {
 
-            for (let countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
+            for (var countContact = 0 ; countContact < aRetResults_temp.length ; countContact++)
             {
-                // console.log("aRetResults_temp[" + countContact.toString() + "] = " + aRetResults_temp[countContact]);    
+                // Log("aRetResults_temp[" + countContact.toString() + "] = " + aRetResults_temp[countContact]);    
 
                 aRetResults_NoDuplicated.push(aRetResults_temp[countContact]);
             }
@@ -863,43 +881,82 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         if (unifyOrderBy == true)
         {
 
-            for (let countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
+            for (var countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
             {
-                //console.log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
+                //Log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
     
-                let temp_contact2 = JSON.parse(aRetResults_NoDuplicated[countContact]);
+                var temp_contact2 = JSON.parse(aRetResults_NoDuplicated[countContact]);
     
                 if (orderBy == "EMAIL")
                 {
-                    aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
+                    if (clean(temp_contact2.primaryEmail) == "")
+                    {
+                        if (clean(temp_contact2.name) == "")
+                        {
+                            aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
+                        }
+                        else
+                        {
+                            aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                        }
+                    }
+                    else
+                    {
+                        aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
+                    }
                 }
                 else
                 {
-                    aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+
+                    if (clean(temp_contact2.name) == "")
+                    {
+                        if (clean(temp_contact2.primaryEmail) == "")
+                        {
+                            aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                        }
+                        else
+                        {
+                            aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
+                        }
+                    }
+                    else
+                    {
+                        aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                    }
+
+
+
+                    
                 }
                 
             }
     
-            aTemp_Name.sort();
+            //aTemp_Name.sort();
+            aTemp_Name.sort(function(a, b)
+            {
+                var x = a.toLowerCase(), y = b.toLowerCase();
+                
+                return x < y ? -1 : x > y ? 1 : 0;
+            });
     
             // create the final array that will be returned
-            for (let countContact = 0 ; countContact < aTemp_Name.length ; countContact++)
+            for (var countContact = 0 ; countContact < aTemp_Name.length ; countContact++)
             {
-                //console.log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
+                //Log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
     
-                let indexArrOriginal = aTemp_Name[countContact].split("|")[1];
+                var indexArrOriginal = aTemp_Name[countContact].split("|")[1];
     
                 aRetResults_final.push(aRetResults_NoDuplicated[indexArrOriginal]);
             }
 
             
-            // console.log("-- aRetResults_final - unifyOrderBy = TRUE --");
-            // console.log("aRetResults_final.length: " + aRetResults_final.length.toString()); 
-            // for (let countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
+            // Log("-- aRetResults_final - unifyOrderBy = TRUE --");
+            // Log("aRetResults_final.length: " + aRetResults_final.length.toString()); 
+            // for (var countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
             // {
-            //     console.log("aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
+            //     Log("aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
             // }
-            // console.log("-- END aRetResults_final - unifyOrderBy = TRUE --");
+            // Log("-- END aRetResults_final - unifyOrderBy = TRUE --");
             
             
 
@@ -910,11 +967,11 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         {
             // not unified: separate results in CONTACTS and DIRECTORY
             // 1st pass: contacts
-            for (let countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
+            for (var countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
             {
-                //console.log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
+                //Log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
 
-                let temp_contact2 = JSON.parse(aRetResults_NoDuplicated[countContact]);
+                var temp_contact2 = JSON.parse(aRetResults_NoDuplicated[countContact]);
 
                 if (temp_contact2.source == "CONTACTS")
                 {
@@ -930,27 +987,32 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                 
             }
 
-            aTemp_Name.sort();
+            aTemp_Name.sort(function(a, b)
+            {
+                var x = a.toLowerCase(), y = b.toLowerCase();
+                
+                return x < y ? -1 : x > y ? 1 : 0;
+            });
 
 
             // create the final array that will be returned
-            for (let countContact = 0 ; countContact < aTemp_Name.length ; countContact++)
+            for (var countContact = 0 ; countContact < aTemp_Name.length ; countContact++)
             {
-                //console.log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
+                //Log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
 
-                let indexArrOriginal = aTemp_Name[countContact].split("|")[1];
+                var indexArrOriginal = aTemp_Name[countContact].split("|")[1];
 
                 aRetResults_final.push(aRetResults_NoDuplicated[indexArrOriginal]);
             }
             
             
-            // console.log("-- aRetResults_final - unifyOrderBy = FALSE - 1st pass >> CONTACTS --");
-            // console.log("aRetResults_final.length: " + aRetResults_final.length.toString()); 
-            // for (let countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
+            // Log("-- aRetResults_final - unifyOrderBy = FALSE - 1st pass >> CONTACTS --");
+            // Log("aRetResults_final.length: " + aRetResults_final.length.toString()); 
+            // for (var countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
             // {
-            //     console.log("aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
+            //     Log("aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
             // }
-            // console.log("-- END aRetResults_final - unifyOrderBy = FALSE - 1st pass >> CONTACTS  --");
+            // Log("-- END aRetResults_final - unifyOrderBy = FALSE - 1st pass >> CONTACTS  --");
             
             
             if (lookInDirectory == true)
@@ -959,11 +1021,11 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
 
                 aTemp_Name = []
                 
-                for (let countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
+                for (var countContact = 0 ; countContact < aRetResults_NoDuplicated.length ; countContact++)
                 {
-                    //console.log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
+                    //Log("aRetResults_NoDuplicated[" + countContact.toString() + "] = " + aRetResults_NoDuplicated[countContact]);    
 
-                    let temp_contact2 = JSON.parse(aRetResults_NoDuplicated[countContact]);
+                    var temp_contact2 = JSON.parse(aRetResults_NoDuplicated[countContact]);
 
                     if (temp_contact2.source == "DIRECTORY")
                     {
@@ -980,43 +1042,48 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
                 }
 
 
-                aTemp_Name.sort();
+                aTemp_Name.sort(function(a, b)
+                {
+                    var x = a.toLowerCase(), y = b.toLowerCase();
+                    
+                    return x < y ? -1 : x > y ? 1 : 0;
+                });
 
 
                 // update the final array that will be returned
-                for (let countContact = 0 ; countContact < aTemp_Name.length ; countContact++)
+                for (var countContact = 0 ; countContact < aTemp_Name.length ; countContact++)
                 {
-                    //console.log("aTemp_Name[" + countContact.toString() + "] = " + aTemp_Name[countContact]);    
+                    //Log("aTemp_Name[" + countContact.toString() + "] = " + aTemp_Name[countContact]);    
 
-                    let indexArrOriginal = aTemp_Name[countContact].split("|")[1];
+                    var indexArrOriginal = aTemp_Name[countContact].split("|")[1];
 
                     aRetResults_final.push(aRetResults_NoDuplicated[indexArrOriginal]);
                 }
 
-                // console.log("-- aRetResults_final - unifyOrderBy = FALSE - 2nd pass >> DIRECTORY --");
-                // console.log("aRetResults_final.length: " + aRetResults_final.length.toString()); 
-                // for (let countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
+                // Log("-- aRetResults_final - unifyOrderBy = FALSE - 2nd pass >> DIRECTORY --");
+                // Log("aRetResults_final.length: " + aRetResults_final.length.toString()); 
+                // for (var countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
                 // {
-                //     console.log("aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
+                //     Log("aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
                 // }
-                // console.log("-- END aRetResults_final - unifyOrderBy = FALSE - 2nd pass >> DIRECTORY  --");                
+                // Log("-- END aRetResults_final - unifyOrderBy = FALSE - 2nd pass >> DIRECTORY  --");                
 
 
             }
         }
 
 
-        let aRetResults_return = [];
+        var aRetResults_return = [];
 
         // finally, fix the index and return the array
-        for (let countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
+        for (var countContact = 0 ; countContact < aRetResults_final.length ; countContact++)
         {
-            // console.log("console = aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
-            // Logger.log("Logger = aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
+            // Log("console = aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
+            // Log("Logger = aRetResults_final[" + countContact.toString() + "] = " + aRetResults_final[countContact]);    
 
             if (typeof(aRetResults_final[countContact]) !== "undefined")
             {
-                let temp_contact2 = JSON.parse(aRetResults_final[countContact]);
+                var temp_contact2 = JSON.parse(aRetResults_final[countContact]);
 
                 temp_contact2.index = countContact.toString();
                 
@@ -1026,13 +1093,13 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         }
 
 
-        // console.log("-- FINAL --");
-        // console.log("aRetResults_return.length: " + aRetResults_return.length.toString()); 
-        // for (let countContact = 0 ; countContact < aRetResults_return.length ; countContact++)
+        // Log("-- FINAL --");
+        // Log("aRetResults_return.length: " + aRetResults_return.length.toString()); 
+        // for (var countContact = 0 ; countContact < aRetResults_return.length ; countContact++)
         // {
-        //     console.log("aRetResults_return[" + countContact.toString() + "] = " + aRetResults_return[countContact]);    
+        //     Log("aRetResults_return[" + countContact.toString() + "] = " + aRetResults_return[countContact]);    
         // }
-        // console.log("-- END FINAL --");
+        // Log("-- END FINAL --");
 
 
         retFunc = aRetResults_return.length.toString() + "|";
@@ -1043,7 +1110,7 @@ function getPeople(searchText, fieldToSearch="ALL", coverage="ALL", orderBy="NAM
         
         
         
-        //console.log(retFunc);
+        //Log(retFunc);
        
     }   
 
@@ -1066,12 +1133,12 @@ function addBtnToBtnSet(id, Text, onClickFunction, isFilled)
 {
     logStack("addBtnToBtnSet");
 
-    let local_function = onClickFunction.toString();
+    var local_function = onClickFunction.toString();
 
-    let TypeButton = CardService.TextButtonStyle.TEXT;
+    var TypeButton = CardService.TextButtonStyle.TEXT;
 
     // Button
-    let action = CardService.newAction()
+    var action = CardService.newAction()
         .setFunctionName(local_function)
         .setLoadIndicator(CardService.LoadIndicator.SPINNER)
         .setParameters({'id': id.toString()});
@@ -1082,7 +1149,7 @@ function addBtnToBtnSet(id, Text, onClickFunction, isFilled)
     }   
      
     
-    let button = CardService.newTextButton()
+    var button = CardService.newTextButton()
         .setText(Text)
         .setTextButtonStyle(TypeButton)
         .setBackgroundColor("#315c7a")
@@ -1099,8 +1166,8 @@ function addBtnToBtnSet(id, Text, onClickFunction, isFilled)
 function getCurrentMessage(event)
 {
     logStack("getCurrentMessage");
-    let accessToken = event.messageMetadata.accessToken;
-    let messageId = event.messageMetadata.messageId;
+    var accessToken = event.messageMetadata.accessToken;
+    var messageId = event.messageMetadata.messageId;
 
     GmailApp.setCurrentMessageAccessToken(accessToken);
 
@@ -1113,11 +1180,11 @@ function getCurrentMessage(event)
 //Get a string in ISO date format, from a given date. returns string: YYYY-MM-DD HH:MM:SS
 function isoDate(theDate)
 {
-    let ret = "";
+    var ret = "";
 
     if (theDate != "" && theDate != null)
     {
-        let ret = theDate.toISOString();
+        var ret = theDate.toISOString();
 
         ret = trim(ret);
         ret = ret.replace("T", " ");
@@ -1133,7 +1200,7 @@ function isoDate(theDate)
 //Get the left-most N caracters from a string
 function left(theString, Size)
 {
-    let ret = "";
+    var ret = "";
 
     if (theString != "" && theString != null)
     {
@@ -1149,7 +1216,7 @@ function left(theString, Size)
 //Get the right-most N caracters from a string
 function right(theString, Size)
 {
-    let ret = "";
+    var ret = "";
 
     if (theString != "" && theString != null)
     {
@@ -1165,7 +1232,7 @@ function right(theString, Size)
 // trim the string
 function trim(theString)
 {  
-    let ret = "";
+    var ret = "";
 
     if (theString != "" && theString != null)
     {
@@ -1181,7 +1248,7 @@ function trim(theString)
 // clean the string removing non printable chars and others that might be handfull. Also trims the string
 function clean(theString)
 {  
-    let ret = "";
+    var ret = "";
 
     if (typeof(theString) === "undefined")
     {
@@ -1192,9 +1259,9 @@ function clean(theString)
     {
         ret = theString.toString();
         ret = trim(ret);
-        ret = replaceALL(String.fromCharCode(160), "");
-        ret = replaceALL(String.fromCharCode(150), "");
-        ret = replaceALL("'", "´");
+        ret = replaceALL(ret, String.fromCharCode(160), "");
+        ret = replaceALL(ret, String.fromCharCode(150), "");
+        ret = replaceALL(ret, "'", "´");
     }
  
     return ret; 
@@ -1218,17 +1285,40 @@ function showPopMsg(Message)
 
 function logStack(theFunc)
 {
-    Logger.log("STACK>> " + theFunc + "()");
+    console.log("STACK>>>  " + theFunc + "()");
+    //Log("STACK>>>  " + theFunc + "()");
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-function Log(Message)
+
+ 
+function InitLogSheet()
 {
-    Logger.log("LOG>> " + Message);
-}
+    // using BetterLog
+    var objLogger = useSpreadsheet('1Dq5qDD3f5gbqRIW6-2UlelIAQ16FgtDPTgLwIcZ48Sc'); 
 
+    return objLogger;
+}
+     
+function LogSheet(stringToLog, objLogger)
+{
+    if (objLogger)
+    {
+        objLogger.info(stringToLog);
+    }
+    
+}
+   
+
+
+function Log(stringToLog)
+{
+    console.log("LOG>>>  " + stringToLog);
+}
+ 
+     
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1237,11 +1327,11 @@ function render_Alert(Message, funcToReturn)
     logStack("render_Alert");
 
     
-    let buttonSet_Back = CardService.newButtonSet();
+    var buttonSet_Back = CardService.newButtonSet();
     buttonSet_Back.addButton(addBtnToBtnSet(1, "Back", funcToReturn.toString(), true));    
 
     // Render the page, adding all widgets
-    let card = CardService.newCardBuilder()
+    var card = CardService.newCardBuilder()
         //.setHeader(cardHeader)
         .addSection(CardService.newCardSection()
             .addWidget(CardService.newTextParagraph().setText(Message))
@@ -1250,7 +1340,7 @@ function render_Alert(Message, funcToReturn)
 
         .build();
 
-    let nav = CardService.newNavigation().pushCard(card);
+    var nav = CardService.newNavigation().pushCard(card);
         return CardService.newActionResponseBuilder()
             .setNavigation(nav)
             .build();
@@ -1266,10 +1356,10 @@ function writeDebugTxtInScreen(theText)
 {
     logStack("writeDebugTxtInScreen");
 
-    let card_section1 = CardService.newCardSection()
+    var card_section1 = CardService.newCardSection()
         .addWidget(CardService.newTextParagraph().setText(theText));
  
-    let card = CardService.newCardBuilder()
+    var card = CardService.newCardBuilder()
         .addSection(card_section1)
         .build();
 
@@ -1287,15 +1377,99 @@ function replaceALL(stringSearched, findString, replaceWith)
     return stringSearched.split(findString).join(replaceWith);
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+function saveUserProperty(property, value)
+{
+    var userProperties  = PropertiesService.getUserProperties();
+    userProperties.setProperty(property, value.toString());
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function loadUserProperty(property)
+{
+    var userProperties  = PropertiesService.getUserProperties();
+    return userProperties.getProperty(property);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// get the SCRIPT_RUN_TIMES, showing how many times the script has run (accross all users)
+function getRunTimeNumber()
+{
+
+    var scriptProperties  = PropertiesService.getScriptProperties();
+    var local_runTimes = scriptProperties.getProperty("SCRIPT_RUN_TIMES");
+
+    if (clean(local_runTimes) == "")
+    {
+        runTimes = 0
+    }
+    else
+    {
+        runTimes = parseInt(local_runTimes) + 1;
+    }
+
+    scriptProperties.setProperty('SCRIPT_RUN_TIMES', runTimes.toString()); // Updates stored value.
+
+    return runTimes.toString();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// increment the SCRIPT_RUN_TIMES
+function incrementRunTimeNumber()
+{
+    var scriptProperties  = PropertiesService.getScriptProperties();
+    var local_runTimes = scriptProperties.getProperty('SCRIPT_RUN_TIMES');
+
+    if (clean(local_runTimes) == "")
+    {
+        runTimes = 0
+    }
+    else
+    {
+        runTimes = parseInt(local_runTimes) + 1;
+    }
+
+    scriptProperties.setProperty('SCRIPT_RUN_TIMES', runTimes.toString()); // Updates stored value.
+
+    //Log("New value for SCRIPT_RUN_TIMES = " + runTimes.toString());
+}
+
+// get the SCRIPT_RUN_TIMES witch shows how many times the script has run, across all users
+function getRunTimeNumber()
+{
+    var scriptProperties  = PropertiesService.getScriptProperties();
+    var local_runTimes = scriptProperties.getProperty('SCRIPT_RUN_TIMES');
+
+    if (clean(local_runTimes) == "")
+    {
+        return 0;
+    }
+    else
+    {
+        return parseInt(local_runTimes);
+    }
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 
 
 
 // function addUserToDirectory() {
-//     let user = {
+//     var user = {
 //       primaryEmail: 'testeteste@teste.com',
 //       name: {
 //         givenName: 'Joao',
@@ -1305,7 +1479,7 @@ function replaceALL(stringSearched, findString, replaceWith)
 //       password: Math.random().toString(36)
 //     };
 //     user = AdminDirectory.Users.insert(user);
-//     Logger.log('User %s created with ID %s.', user.primaryEmail, user.id);
+//     Log('User %s created with ID %s.', user.primaryEmail, user.id);
 //   }
 
 

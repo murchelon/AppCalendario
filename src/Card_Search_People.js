@@ -8,7 +8,7 @@ function render_Card_SearchPeople(optError)
 
 
     // create the header
-    let card_Header = CardService.newCardHeader()
+    var card_Header = CardService.newCardHeader()
         .setTitle("SEARCH PEOPLE:")
         //.setSubtitle("3")
         .setImageStyle(CardService.ImageStyle.CIRCLE)
@@ -16,24 +16,24 @@ function render_Card_SearchPeople(optError)
 
 
     // create the search field
-    let searchField = CardService.newTextInput()
+    var searchField = CardService.newTextInput()
         .setFieldName('txtSearch')
         .setHint('Name or email address')
         .setTitle('Search for people:');
                 
 
     // create button that executes search
-    let buttonSet_DoSearch = CardService.newButtonSet();
+    var buttonSet_DoSearch = CardService.newButtonSet();
     buttonSet_DoSearch.addButton(addBtnToBtnSet(1, "Search", "onClick_btnDoSearch"));
 
     // create a section that will hold the search input box and button
-    let card_section1 = CardService.newCardSection()
+    var card_section1 = CardService.newCardSection()
         .addWidget(searchField)
         .addWidget(buttonSet_DoSearch);
 
  
     // Render the page, adding all widgets
-    let card = CardService.newCardBuilder()
+    var card = CardService.newCardBuilder()
         .setHeader(card_Header)
         .addSection(card_section1)
 
@@ -56,13 +56,13 @@ function render_Card_SearchPeopleResults(event, result_JSON, txtToSearch)
     logStack("render_Card_SearchPeopleResults");
 
  
-    let TotalFound = result_JSON.split("|")[0];
-    let objResults = JSON.parse(result_JSON.split("|")[1]);
+    var TotalFound = result_JSON.split("|")[0];
+    var objResults = JSON.parse(result_JSON.split("|")[1]);
 
-    let hasResultContact = false;
-    let hasResultDirectory = false;
+    var hasResultContact = false;
+    var hasResultDirectory = false;
     
-    let outTotalFoundText = TotalFound;
+    var outTotalFoundText = TotalFound;
 
     if (parseInt(TotalFound) >= 2)
     {
@@ -73,13 +73,13 @@ function render_Card_SearchPeopleResults(event, result_JSON, txtToSearch)
         outTotalFoundText += " person found";
     }
 
-    // console.log("objResults = " + objResults);
+    // Log("objResults = " + objResults);
 
     
     if (txtToSearch == "") {txtToSearch = "[everyone]";}
 
     // create the header
-    let card_Header = CardService.newCardHeader()
+    var card_Header = CardService.newCardHeader()
         .setTitle("Searched for: " + txtToSearch)
         .setSubtitle(outTotalFoundText)        
         .setImageStyle(CardService.ImageStyle.CIRCLE)
@@ -87,20 +87,20 @@ function render_Card_SearchPeopleResults(event, result_JSON, txtToSearch)
 
 
     // create a section 
-    let card_section_contacts = CardService.newCardSection()
+    var card_section_contacts = CardService.newCardSection()
                                 .setHeader('Contacts:');
 
-    let card_section_directory = CardService.newCardSection()
+    var card_section_directory = CardService.newCardSection()
                                 .setHeader('Directory:');
 
 
     
     objResults.forEach(function(contact) {
 
-        //console.log("contact.name = " + contact.name);
+        //Log("contact.name = " + contact.name);
 
         // create the action called when clicking in the contact widget
-        let clickAction = CardService.newAction()
+        var clickAction = CardService.newAction()
             .setFunctionName('onClick_widgetContact')
             .setLoadIndicator(CardService.LoadIndicator.SPINNER)
             .setParameters({
@@ -112,16 +112,24 @@ function render_Card_SearchPeopleResults(event, result_JSON, txtToSearch)
                             thumbnailPhotoUrl: contact.thumbnailPhotoUrl
                             });
     
-        let outEmail = trim(contact.primaryEmail);
+
+        var outEmail = trim(contact.primaryEmail);
 
         if (outEmail == "")
         {
             outEmail = "[e-mail in blank]";
         }
 
+        var outName = trim(contact.name);
+
+        if (outName == "")
+        {
+            outName = "[name in blank]";
+        }
+
         // create the widget representing the contacts
-        let widgetContact = CardService.newKeyValue()
-            .setContent(contact.name)
+        var widgetContact = CardService.newKeyValue()
+            .setContent(outName)
             //.setIconUrl("https://www.google.com/s2/photos/private/AIbEiAIAAABDCIO7nJHQho2MZSILdmNhcmRfcGhvdG8qKDAxYjViOGI4YTY0NGMxYmJlZTdhOGMyNTg2YzVkNDRlNmY1YTNmYjcwActmRXhrsvDBsBLzvmHzsmK68jIb")            
             .setIconUrl(contact.thumbnailPhotoUrl)            
             .setBottomLabel(outEmail)
@@ -146,7 +154,7 @@ function render_Card_SearchPeopleResults(event, result_JSON, txtToSearch)
 
     
     // // mount and return the card
-    let card = CardService.newCardBuilder();    
+    var card = CardService.newCardBuilder();    
     card.setHeader(card_Header);
       
     if (hasResultContact == true)
@@ -167,7 +175,7 @@ function onClick_btnDoSearch(event)
 {
     logStack("onClick_btnDoSearch");
 
-    let txtToSearch = "";
+    var txtToSearch = "";
 
     try
     {
@@ -187,15 +195,15 @@ function onClick_btnDoSearch(event)
 
 
 
-    //console.log("txtToSearch = " + txtToSearch);
+    //Log("txtToSearch = " + txtToSearch);
 
     // getPeople(searchText, fieldToSearch, coverage, OrderBy, UnifyOrderBy)
 
-    //let retFunc = getPeople("Marcelo", "NAME", "ALL");
-    //let retFunc = getPeople("marcelo", "ALL", "ALL");
-    //let retFunc = getPeople("marcelo", "", "", "", false);
+    //var retFunc = getPeople("Marcelo", "NAME", "ALL");
+    //var retFunc = getPeople("marcelo", "ALL", "ALL");
+    //var retFunc = getPeople("marcelo", "", "", "", false);
 
-    let retFunc = getPeople(txtToSearch, "ALL", "ALL", "NAME", true);
+    var retFunc = getPeople(txtToSearch, "ALL", "ALL", "NAME", true);
 
     
     if (left(retFunc, 2) == "-1")
@@ -208,7 +216,7 @@ function onClick_btnDoSearch(event)
     }
     else
     {
-        //console.log("retFunc: " + retFunc);
+        //Log("retFunc: " + retFunc);
         return render_Card_SearchPeopleResults(event, retFunc, txtToSearch);
     }
 
@@ -222,10 +230,10 @@ function onClick_widgetContact(event)
 {
     logStack("onClick_widgetContact");
 
-    let person = event.parameters;
-    let acao = "NEW";
+    var person = event.parameters;
+    var acao = "NEW";
 
-    //Logger.log("person1 = " + person.primaryEmail);
+    //Log("person1 = " + person.primaryEmail);
 
     if (clean(person.primaryEmail) == "")
     {

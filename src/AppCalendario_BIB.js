@@ -29,14 +29,14 @@ function DB_OpenConnection()
   
     logStack("DB_OpenConnection");
   
-    let instanceUrl = "jdbc:mysql://" + gGlobalVars().DB_Address;
-    let dbUrl = instanceUrl + "/" + gGlobalVars().DB_Name;
+    var instanceUrl = "jdbc:mysql://" + gGlobalVars().DB_Address;
+    var dbUrl = instanceUrl + "/" + gGlobalVars().DB_Name;
 
     gDB_objConn = Jdbc.getConnection(dbUrl, gGlobalVars().DB_User, gGlobalVars().DB_Password);
 
     
-    //let instanceUrl = 'jdbc:google:mysql://' + gGlobalVars()().DB_Address;
-    //let dbUrl = instanceUrl + '/' + gGlobalVars()().DB_Name;
+    //var instanceUrl = 'jdbc:google:mysql://' + gGlobalVars()().DB_Address;
+    //var dbUrl = instanceUrl + '/' + gGlobalVars()().DB_Name;
   
     //gDB_objConn = Jdbc.getCloudSqlConnection(dbUrl, gGlobalVars()().DB_User, gGlobalVars()().DB_Password);
   

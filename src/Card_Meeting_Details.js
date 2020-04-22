@@ -13,14 +13,15 @@ function render_Meeting_Details(action, person)
 {
     logStack("render_Meeting_Details");
 
-    let weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-    let rep = ['1', '2', '3', '4'];
-    let weekMonth = ['Week', 'Month'];    
+    var weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    var rep = ['1', '2', '3', '4'];
+    var weekMonth = ['Week', 'Month'];    
  
-    let outEmail = "";
+    var outEmail = "";
+    var outName = "";
 
 
-    Logger.log("person.primaryEmail = " + clean(person.primaryEmail));
+    Log("person.primaryEmail = " + clean(person.primaryEmail));
 
     if (clean(person.primaryEmail) == "")
     {
@@ -31,21 +32,30 @@ function render_Meeting_Details(action, person)
         outEmail = person.primaryEmail;
     }
 
+    if (clean(person.name) == "")
+    {
+        outName = "[name in blank]";
+    }
+    else
+    {
+        outName = person.name;
+    }
+
     // create the header
-    let card_Header = CardService.newCardHeader()
-        .setTitle(person.name)
+    var card_Header = CardService.newCardHeader()
+        .setTitle(outName)
         .setSubtitle(outEmail)        
         .setImageStyle(CardService.ImageStyle.CIRCLE)
         .setImageUrl(person.thumbnailPhotoUrl);
 
 
 
-    let card_section1 = CardService.newCardSection().setHeader('Select a starting date and time:');
+    var card_section1 = CardService.newCardSection().setHeader('Select a starting date and time:');
 
     // DATE PICKER:
     //card_section1.addWidget(CardService.newTextParagraph().setText("Select a starting date and time:"));
 
-    let input_dateTimePicker = CardService.newDateTimePicker()
+    var input_dateTimePicker = CardService.newDateTimePicker()
         .setTitle("Date and Time:")
         .setFieldName("txt_dateTimePicker")
         // Set default value as Jan 1, 2018, 3:00 AM UTC. Either a number or string is acceptable.
@@ -59,16 +69,16 @@ function render_Meeting_Details(action, person)
     card_section1.addWidget(input_dateTimePicker);        
         
     
-    let card_section2 = CardService.newCardSection().setHeader('Meet every:');
+    var card_section2 = CardService.newCardSection().setHeader('Meet every:');
 
     // RADIO WEEK DAYS:
     //card_section2.addWidget(CardService.newTextParagraph().setText("The meeting should be in the following week day:"));
 
-    let input_radio_WeekDays = CardService.newSelectionInput()
+    var input_radio_WeekDays = CardService.newSelectionInput()
         .setType(CardService.SelectionInputType.RADIO_BUTTON)
         .setFieldName('radio_WeekDays');
 
-    for (let day in weekdays)
+    for (var day in weekdays)
     {
         input_radio_WeekDays.addItem(weekdays[day], day, false);
     }
@@ -79,15 +89,15 @@ function render_Meeting_Details(action, person)
 
 
     // REPEAT SELECTION - TIMES:   
-    let card_section3 = CardService.newCardSection().setHeader('Repeat for:');
+    var card_section3 = CardService.newCardSection().setHeader('Repeat for:');
 
     //card_section3.addWidget(CardService.newTextParagraph().setText("Repeat every:"));
     
-    let input_cboRepeatTimes = CardService.newSelectionInput() //.setTitle('Repeat every')
+    var input_cboRepeatTimes = CardService.newSelectionInput() //.setTitle('Repeat every')
         .setType(CardService.SelectionInputType.DROPDOWN)
         .setFieldName('cbo_RepeatTimes');
 
-    for (let r in rep) 
+    for (var r in rep) 
     {
         input_cboRepeatTimes.addItem(rep[r], rep[r], false);
     }
@@ -97,11 +107,11 @@ function render_Meeting_Details(action, person)
   
     // REPEAT SELECTION - WEEKMONTH:  
 
-    let input_cboWeekMonth = CardService.newSelectionInput()
+    var input_cboWeekMonth = CardService.newSelectionInput()
         .setType(CardService.SelectionInputType.DROPDOWN)
         .setFieldName('cbo_WeekMonth');
         
-    for (let w in weekMonth) 
+    for (var w in weekMonth) 
     {
         input_cboWeekMonth.addItem(weekMonth[w], weekMonth[w], false);
     }
@@ -110,25 +120,25 @@ function render_Meeting_Details(action, person)
 
 
     // EXISTING MEETINGS:
-    let card_section4 = CardService.newCardSection().setHeader('Meetings already scheduled:');
+    var card_section4 = CardService.newCardSection().setHeader('Meetings already scheduled:');
     
     card_section4.addWidget(CardService.newTextParagraph().setText("No meetings scheduled."));
 
 
     // create button that saves the meeting --  FOOTER
-    let actionSaveMeeting = CardService.newAction()
+    var actionSaveMeeting = CardService.newAction()
         .setFunctionName("onClick_btnSaveMeeting")        
         .setParameters({
             index: person.index,
             id: person.id,
             source: person.source,
-            name: person.name,
+            name: outName,
             primaryEmail: outEmail,
             thumbnailPhotoUrl: person.thumbnailPhotoUrl
             });
             
 
-    let fixedFooter = CardService.newFixedFooter()
+    var fixedFooter = CardService.newFixedFooter()
         .setPrimaryButton(CardService.newTextButton()
             .setText("SAVE")
             .setOnClickAction(actionSaveMeeting));
@@ -137,7 +147,7 @@ function render_Meeting_Details(action, person)
 
 
     // mount and return the card
-    let card = CardService.newCardBuilder();    
+    var card = CardService.newCardBuilder();    
     card.setHeader(card_Header);
     card.addSection(card_section1);
     card.addSection(card_section2);
