@@ -9,7 +9,12 @@ function gGlobalVars()
         DB_Address: "146.148.99.109",    
         DB_User: "quiteoften_api_engine",    
         DB_Password: "Ujk95Ehu6A302",    
-        DB_Name: "quiteoften_db1"
+        DB_Name: "quiteoften_db1",
+        
+        APP_ModoDebug: true,
+        APP_ID_LogSheet: "1Dq5qDD3f5gbqRIW6-2UlelIAQ16FgtDPTgLwIcZ48Sc"
+        
+        
         
         //DB_Base: "MYSQL",    
         //DB_Address: "to1-271017:southamerica-east1:onetoone2",    

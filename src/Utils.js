@@ -1360,8 +1360,10 @@ function showPopMsg(Message)
 
 function logStack(theFunc)
 {
-    console.log("STACK>>>  " + theFunc + "()");
-    //Log("STACK>>>  " + theFunc + "()");
+    if (gGlobalVars().APP_ModoDebug == true)
+    {
+        console.log("STACK>>>  " + theFunc + "()");
+    }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1371,26 +1373,34 @@ function logStack(theFunc)
  
 function InitLogSheet()
 {
-    // using BetterLog
-    var objLogger = useSpreadsheet('1Dq5qDD3f5gbqRIW6-2UlelIAQ16FgtDPTgLwIcZ48Sc'); 
+    if (gGlobalVars().APP_ModoDebug == true)
+    {
+        // using BetterLog
+        var objLogger = useSpreadsheet(gGlobalVars().APP_ID_LogSheet); 
 
-    return objLogger;
+        return objLogger;
+    }    
 }
      
 function LogSheet(stringToLog, objLogger)
 {
-    if (objLogger)
+    if (gGlobalVars().APP_ModoDebug == true)
     {
-        objLogger.info(stringToLog);
+        if (objLogger)
+        {
+            objLogger.info(stringToLog);
+        }
     }
-    
 }
    
 
 
 function Log(stringToLog)
 {
-    console.log("LOG>>>  " + stringToLog);
+    if (gGlobalVars().APP_ModoDebug == true)
+    {
+        console.log("LOG>>>  " + stringToLog);
+    } 
 }
  
      
