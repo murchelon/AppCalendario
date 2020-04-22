@@ -923,12 +923,7 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                     {
                         aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
                     }
-
-
-
-                    
                 }
-                
             }
     
             //aTemp_Name.sort();
@@ -977,11 +972,40 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                 {
                     if (orderBy == "EMAIL")
                     {
-                        aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
+                        if (clean(temp_contact2.primaryEmail) == "")
+                        {
+                            if (clean(temp_contact2.name) == "")
+                            {
+                                aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
+                            }
+                            else
+                            {
+                                aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                            }
+                        }
+                        else
+                        {
+                            aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
+                        }
                     }
                     else
                     {
-                        aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+
+                        if (clean(temp_contact2.name) == "")
+                        {
+                            if (clean(temp_contact2.primaryEmail) == "")
+                            {
+                                aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                            }
+                            else
+                            {
+                                aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
+                            }
+                        }
+                        else
+                        {
+                            aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                        }
                     }
                 }
                 
@@ -1031,11 +1055,40 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                     {
                         if (orderBy == "EMAIL")
                         {
-                            aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
+                            if (clean(temp_contact2.primaryEmail) == "")
+                            {
+                                if (clean(temp_contact2.name) == "")
+                                {
+                                    aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
+                                }
+                                else
+                                {
+                                    aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                                }
+                            }
+                            else
+                            {
+                                aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
+                            }
                         }
                         else
                         {
-                            aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+        
+                            if (clean(temp_contact2.name) == "")
+                            {
+                                if (clean(temp_contact2.primaryEmail) == "")
+                                {
+                                    aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                                }
+                                else
+                                {
+                                    aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
+                                }
+                            }
+                            else
+                            {
+                                aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                            }
                         }
                     }
                     
