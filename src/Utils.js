@@ -453,12 +453,21 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                             // Log("FINAL: contact_etag = " + contact_etag);
                             // Log("============================");   
                             
+                            // we must add the string bellow so that the ID in the contacts and people are the same. 
+                            // In contacts, we get the "full" id, while in people we get the short version, so, we
+                            // need to concatenate it here.
+
+
+                            var _email = replaceALL(Session.getEffectiveUser().getEmail(), "@", "%40");
+        
+                            var outFullContact_id = "http://www.google.com/m8/feeds/contacts/" + _email + "/base/" + contact_id;
+
 
                             var retJSON = "";
                             retJSON += "{";
                             retJSON += "    'index': " + contaPeople.toString() + ",";
                             retJSON += "    'source': 'PEOPLE_API',";
-                            retJSON += "    'id': '" + contact_id + "',";
+                            retJSON += "    'id': '" + outFullContact_id + "',";
                             retJSON += "    'etag': '" + contact_etag + "',";
                             retJSON += "    'resourceName': '" + contact_resourceName + "',";
                             retJSON += "    'name': '" + contact_name + "',";
@@ -579,10 +588,12 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
 
                     //return writeDebugTxtInScreen("gGlobalVars.Session_UserEmail = " + gGlobalVars.Session_UserEmail);
 
-                    var _email = replaceALL(Session.getEffectiveUser().getEmail(), "@", "%40");
+                    
                                       
                     var outThumbnailPhotoUrl = "https://ssl.gstatic.com/s2/profiles/images/silhouette200.png";
                     
+                    var _email = replaceALL(Session.getEffectiveUser().getEmail(), "@", "%40");
+
                     //var outID = replaceALL(contacts[c].getId(), "http://www.google.com/m8/feeds/contacts/" + _email + "/base/", "");
                     var outID = contacts[c].getId();
 
@@ -1145,6 +1156,16 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
             }
 
         }
+
+
+        // var objLogSheet = InitLogSheet();
+        // LogSheet("-- aRetResults_return - FINAL --", objLogSheet);
+        // LogSheet("aRetResults_return.length: " + aRetResults_return.length.toString(), objLogSheet); 
+        // for (var countContact = 0 ; countContact < aRetResults_return.length ; countContact++)
+        // {
+        //     LogSheet("aRetResults_return[" + countContact.toString() + "] = " + aRetResults_return[countContact], objLogSheet);    
+        // }
+        // LogSheet("-- END aRetResults_return - FINAL --"), objLogSheet;
 
 
         // Log("-- FINAL --");
