@@ -124,7 +124,8 @@ function render_Card_SearchPeopleResults(event, result_JSON, txtToSearch)
 
         if (outName == "")
         {
-            outName = "[name in blank]";
+            //outName = "[name in blank]";
+            outName = "<i>[name in blank]</i>";
         }
 
         // create the widget representing the contacts

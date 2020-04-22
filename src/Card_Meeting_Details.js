@@ -161,7 +161,48 @@ function render_Meeting_Details(action, person)
 
 function onClick_btnSaveMeeting(event)
 {
+    var dateTimeInput = event.formInputs["txt_dateTimePicker"];
+    var msSinceEpoch = dateTimeInput[0].msSinceEpoch;
+    var hasDate = dateTimeInput[0].hasDate;
+    var hasTime = dateTimeInput[0].hadTime;
+
+    // The following requires you to configure the add-on to read user locale
+    // and timezone.
+    // See https://developers.google.com/gsuite/add-ons/how-tos/access-user-locale
+    var userTimezoneId = event.userTimezone.id;
+
+    // Format and log the date-time selected using the user's timezone.
+    var formattedDateTime;
+
+    if (hasDate && hasTime) 
+    {
+        formattedDateTime = Utilities.formatDate(new Date(msSinceEpoch), userTimezoneId, "yyy/MM/dd hh:mm:ss");
+    } 
+    else if (hasDate) 
+    {
+        formattedDateTime = Utilities.formatDate(new Date(msSinceEpoch), userTimezoneId, "yyy/MM/dd") + ", Time unspecified";
+    }
+    else if (hasTime) 
+    {
+        formattedDateTime = "Date unspecified, " + Utilities.formatDate(new Date(msSinceEpoch), userTimezoneId, "hh:mm a");
+    }
+
+    if (formattedDateTime) 
+    {
+        console.log(formattedDateTime);
+    }
+
+    formattedDateTime = Utilities.formatDate(new Date(msSinceEpoch), userTimezoneId, "yyy/MM/dd hh:mm:ss");
 
 
-    return showPopMsg("onClick_btnSaveMeeting");
+    //var formattedDateTime = JSON.stringify(dateTimeInput);
+
+    // var objLogSheet = InitLogSheet();
+    // LogSheet(formattedDateTime, objLogSheet);
+
+    var nowServer = new Date();
+    //var date = Utilities.formatDate(new Date(), "GMT+1", "dd/MM/yyyy")
+
+
+    return showPopMsg("onClick_btnSaveMeeting: " + formattedDateTime + " | " + nowServer);
 }
