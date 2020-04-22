@@ -481,14 +481,14 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                 
                 // Log("FINAL: totalItensFound = " + totalItensFound);
    
-                var objLogSheet = InitLogSheet();
-                LogSheet("-- aPeopleContactPhotos - PEOPLE API --", objLogSheet);
-                LogSheet("aPeopleContactPhotos.length: " + aPeopleContactPhotos.length.toString(), objLogSheet); 
-                for (var countContact = 0 ; countContact < aPeopleContactPhotos.length ; countContact++)
-                {
-                    LogSheet("aPeopleContactPhotos[" + countContact.toString() + "] = " + aPeopleContactPhotos[countContact], objLogSheet);    
-                }
-                LogSheet("-- END aPeopleContactPhotos - PEOPLE API --", objLogSheet);            
+                // var objLogSheet = InitLogSheet();
+                // LogSheet("-- aPeopleContactPhotos - PEOPLE API --", objLogSheet);
+                // LogSheet("aPeopleContactPhotos.length: " + aPeopleContactPhotos.length.toString(), objLogSheet); 
+                // for (var countContact = 0 ; countContact < aPeopleContactPhotos.length ; countContact++)
+                // {
+                //     LogSheet("aPeopleContactPhotos[" + countContact.toString() + "] = " + aPeopleContactPhotos[countContact], objLogSheet);    
+                // }
+                // LogSheet("-- END aPeopleContactPhotos - PEOPLE API --", objLogSheet);            
 
 
                 // Log("-- aPeopleContactPhotos - PEOPLE API --");
