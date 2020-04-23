@@ -470,7 +470,7 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                             retJSON += "    'id': '" + outFullContact_id + "',";
                             retJSON += "    'etag': '" + contact_etag + "',";
                             retJSON += "    'resourceName': '" + contact_resourceName + "',";
-                            retJSON += "    'name': '" + contact_name + "',";
+                            retJSON += "    'fullName': '" + contact_name + "',";
                             retJSON += "    'photoProfile': '" + contact_photo + "'";
                             retJSON += "}";     
 
@@ -602,7 +602,7 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                     retJSON += "    'index': " + countResult.toString() + ",";
                     retJSON += "    'id': '" + outID + "',";
                     retJSON += "    'source': 'CONTACTS',";
-                    retJSON += "    'name': '" + contacts[c].getFullName() + "',";
+                    retJSON += "    'fullName': '" + contacts[c].getFullName() + "',";
 
                     if (contacts[c].getEmails().length > 0)
                     {
@@ -757,7 +757,7 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                         retJSON += "    'index': " + countResult.toString() + ",";
                         retJSON += "    'id': '" + user.id + "',";
                         retJSON += "    'source': 'DIRECTORY',";
-                        retJSON += "    'name': '" + user.name.fullName + "',";
+                        retJSON += "    'fullName': '" + user.name.fullName + "',";
 
                         if (user.primaryEmail != "")
                         {
@@ -903,13 +903,13 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                 {
                     if (clean(temp_contact2.primaryEmail) == "")
                     {
-                        if (clean(temp_contact2.name) == "")
+                        if (clean(temp_contact2.fullName) == "")
                         {
                             aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
                         }
                         else
                         {
-                            aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                            aTemp_Name.push(temp_contact2.fullName + "|" + countContact.toString());
                         }
                     }
                     else
@@ -920,11 +920,11 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                 else
                 {
 
-                    if (clean(temp_contact2.name) == "")
+                    if (clean(temp_contact2.fullName) == "")
                     {
                         if (clean(temp_contact2.primaryEmail) == "")
                         {
-                            aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                            aTemp_Name.push(temp_contact2.fullName + "|" + countContact.toString());
                         }
                         else
                         {
@@ -933,7 +933,7 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                     }
                     else
                     {
-                        aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                        aTemp_Name.push(temp_contact2.fullName + "|" + countContact.toString());
                     }
                 }
             }
@@ -986,13 +986,13 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                     {
                         if (clean(temp_contact2.primaryEmail) == "")
                         {
-                            if (clean(temp_contact2.name) == "")
+                            if (clean(temp_contact2.fullName) == "")
                             {
                                 aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
                             }
                             else
                             {
-                                aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                                aTemp_Name.push(temp_contact2.fullName + "|" + countContact.toString());
                             }
                         }
                         else
@@ -1003,11 +1003,11 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                     else
                     {
 
-                        if (clean(temp_contact2.name) == "")
+                        if (clean(temp_contact2.fullName) == "")
                         {
                             if (clean(temp_contact2.primaryEmail) == "")
                             {
-                                aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                                aTemp_Name.push(temp_contact2.fullName + "|" + countContact.toString());
                             }
                             else
                             {
@@ -1016,7 +1016,7 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                         }
                         else
                         {
-                            aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                            aTemp_Name.push(temp_contact2.fullName + "|" + countContact.toString());
                         }
                     }
                 }
@@ -1069,13 +1069,13 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                         {
                             if (clean(temp_contact2.primaryEmail) == "")
                             {
-                                if (clean(temp_contact2.name) == "")
+                                if (clean(temp_contact2.fullName) == "")
                                 {
                                     aTemp_Name.push(temp_contact2.primaryEmail + "|" + countContact.toString());
                                 }
                                 else
                                 {
-                                    aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                                    aTemp_Name.push(temp_contact2.fullName + "|" + countContact.toString());
                                 }
                             }
                             else
@@ -1086,11 +1086,11 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                         else
                         {
         
-                            if (clean(temp_contact2.name) == "")
+                            if (clean(temp_contact2.fullName) == "")
                             {
                                 if (clean(temp_contact2.primaryEmail) == "")
                                 {
-                                    aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                                    aTemp_Name.push(temp_contact2.fullName + "|" + countContact.toString());
                                 }
                                 else
                                 {
@@ -1099,7 +1099,7 @@ function getPeople(searchText, fieldToSearch, coverage, orderBy, unifyOrderBy)
                             }
                             else
                             {
-                                aTemp_Name.push(temp_contact2.name + "|" + countContact.toString());
+                                aTemp_Name.push(temp_contact2.fullName + "|" + countContact.toString());
                             }
                         }
                     }

@@ -97,7 +97,7 @@ function render_Card_SearchPeopleResults(event, result_JSON, txtToSearch)
     
     objResults.forEach(function(contact) {
 
-        //Log("contact.name = " + contact.name);
+        //Log("contact.name = " + contact.fullName);
 
         // create the action called when clicking in the contact widget
         var clickAction = CardService.newAction()
@@ -107,7 +107,7 @@ function render_Card_SearchPeopleResults(event, result_JSON, txtToSearch)
                             index: contact.index,
                             id: contact.id,
                             source: contact.source,
-                            name: contact.name,
+                            fullName: contact.fullName,
                             primaryEmail: contact.primaryEmail,
                             thumbnailPhotoUrl: contact.thumbnailPhotoUrl
                             });
@@ -120,7 +120,7 @@ function render_Card_SearchPeopleResults(event, result_JSON, txtToSearch)
             outEmail = "[e-mail in blank]";
         }
 
-        var outName = trim(contact.name);
+        var outName = trim(contact.fullName);
 
         if (outName == "")
         {
