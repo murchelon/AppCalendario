@@ -242,7 +242,7 @@ function onClick_widgetContact(event)
     }
     else
     {
-        return render_Meeting_Details(acao, person);
+        return render_Meeting_Details(event, acao, person);
     }
     
 }

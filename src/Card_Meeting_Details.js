@@ -9,7 +9,31 @@
  */
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function render_Meeting_Details(action, person)
+
+function sctriptTimeZoneOffsetFormated() 
+{
+    function pad(number, length)
+    {
+        var str = "" + number;
+
+        while (str.length < length) 
+        {
+            str = '0' + str;
+        }
+
+        return str;
+    }
+  
+    var offset = new Date().getTimezoneOffset()
+
+    offset = ((offset < 0 ? '+' : '-') + // Note the reversed sign!
+    pad(parseInt(Math.abs(offset/60)), 2) + pad(Math.abs(offset%60), 2));
+
+    return offset;
+}
+  
+
+function render_Meeting_Details(event, action, person)
 {
     logStack("render_Meeting_Details");
 
@@ -21,7 +45,7 @@ function render_Meeting_Details(action, person)
     var outName = "";
 
 
-    Log("person.primaryEmail = " + clean(person.primaryEmail));
+    //Log("person.primaryEmail = " + clean(person.primaryEmail));
 
     if (clean(person.primaryEmail) == "")
     {
@@ -48,9 +72,16 @@ function render_Meeting_Details(action, person)
         .setImageStyle(CardService.ImageStyle.CIRCLE)
         .setImageUrl(person.thumbnailPhotoUrl);
 
+    //var scriptTimeZone = Session.getScriptTimeZone();
 
+    //var x = sctriptTimeZoneOffsetFormated()
+    //var y = event.userTimezone.id  + "teste"
+    //var y = event.userTimezone.offset
+    var y = Session.getActiveUserLocale()
 
-    var card_section1 = CardService.newCardSection().setHeader('Select a starting date and time:');
+    //var card_section1 = CardService.newCardSection().setHeader("Select a starting date and time:"");
+    var card_section1 = CardService.newCardSection().setHeader("script: " + y);
+
 
     // DATE PICKER:
     //card_section1.addWidget(CardService.newTextParagraph().setText("Select a starting date and time:"));

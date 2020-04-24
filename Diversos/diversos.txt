@@ -10,6 +10,11 @@
     "https://www.google.com/m8/feeds"
   ],
 
+TODO:
+- Resolver calendario: cadastrar e editar
+- Como mandamos email a partir do usuario unico da app ?
+- Como podemos habilitar o uso do qt para um usuario de outro dominio ? Gabirel vai fornecer usuarios de teste de um segundo dominio
+- 
 
 
 {
